@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "removeComments": false,
+    "outDir": "C:/Users/Max1M/Documents/Worldpainter/scripts/advOperator",
+    "module": "CommonJS",
+    "target": "ES5"
+  },
+  "files": [
+    "index.ts",
+    "Operation.ts",
+    "Filter.ts"
+  ]
+}
