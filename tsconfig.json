@@ -7,8 +7,6 @@
     "target": "ES5"
   },
   "files": [
-    "index.ts",
-    "Operation.ts",
-    "Filter.ts"
+    "index.ts"
   ]
 }
