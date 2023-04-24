@@ -1,3 +1,4 @@
+import { isOperation } from "./AdvancedOperator"
 
 function isValidApply(op: object):boolean {
     let out: boolean = (typeof op == "object") && op.hasOwnProperty("type")
@@ -9,7 +10,8 @@ function getTerrainByIdx(terrain_idx: number):string {
     return org.pepsoft.worldpainter.Terrain.values()[terrain_idx].getName()
 }
 
-function parseJsonFromFile(filePath: string): Array<OperationInterface> {
+
+export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
     // @ts-ignore
     var path = java.nio.file.Paths.get(filePath)
     // @ts-ignore
@@ -21,11 +23,11 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
     let opList: OperationInterface[] = []
     // @ts-ignore
     for (var op: string of out.operations) {
-        assert(isOperation(op),"invalid operation")
+        assert(isOperation(op))
         let tOp: OperationInterface;
         switch (op.type) {
             case OperationType.applyTerrain: {
-                tOp = new TerrainOperation(op.name, op.layer,op.layerValue, op.angle, op.terrain)
+                tOp = new TerrainOperation(op.name, op.layer,op.layerValue)
                 break;
             }
             case OperationType.setLayer: {
@@ -35,8 +37,6 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
                     op.layer,
                     op.layerValue,
                     op.angle,
-                    op.targetLayer,
-                    op.targetValue
                 )
                 break;
             }
@@ -54,13 +54,13 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
  * apply operations as defined in object
  * @param {object} obj
  */
-function applyAllOperations(opList: OperationInterface[]) {
+export function applyAllOperations(opList: OperationInterface[]) {
     for (var i = 0; i < opList.length; i++) {
-        opList[i].execute()
+        opList[i].execute(1,2,3)
     }
 }
 
-function getTerrainIdxForCustom(index) {
+function getTerrainIdxForCustom(index: number) {
     return (index < 48)
         ? ((index < 24) ? index + 47 : index + 52)
         : index + 54;

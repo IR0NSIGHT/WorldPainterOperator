@@ -1,23 +1,21 @@
 const path = require('path');
 
 module.exports = {
-  entry: './dist/index.js',
+  entry: './dist/AdvancedOperator.js',
   output: {
-    filename: 'bundle.js',
+    filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
   },
+
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
-      },
-    ],
-  },
+        }
+      }
+    ]
+  }
 };

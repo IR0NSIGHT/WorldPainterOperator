@@ -5,6 +5,8 @@
 // script.param.file1.optional=true
 // script.param.file1.default=C:\Users\Max1M\Documents\Worldpainter\scripts\operations\test.json
 
+import { applyAllOperations, parseJsonFromFile } from "./FileReader";
+
 declare function print(mssg: string): void;
 // @ts-ignore: params supplied by context
 const params = params;
@@ -15,7 +17,7 @@ const world = world;
 
 
 
-function isOperation(operation: object): operation is OperationInterface {
+export function isOperation(operation: object): operation is OperationInterface {
     let cast: OperationInterface = (operation as OperationInterface)
     print (JSON.stringify(cast))
     return cast.name !== undefined
@@ -24,40 +26,6 @@ function isOperation(operation: object): operation is OperationInterface {
 const filePath: string = params["file1"]
 const operations = ["set_terrain","set_layer"]
 
-function paintAboveDegree(terrain_idx, aboveAngle, layer, layerValue) {
-    
-    var filter = null; 
-    if (layer == null) {
-        print("no layer given")
-        // @ts-ignore
-        filter = wp
-        .createFilter()
-        .aboveDegrees(aboveAngle) // Optional. Mutuatlly exclusive with aboveDegrees(). Specifies the slope in degrees below which the operation must be applied. PLEASE NOTE: only works well with worlds created from high res (16-bit) height maps or sculpted manually in WorldPainter!
-        .go();
-    } else {
-        print("layer given: " + layer.getName())
-        // @ts-ignore
-        filter = wp
-        .createFilter()
-        .aboveDegrees(aboveAngle) // Optional. Mutuatlly exclusive with aboveDegrees(). Specifies the slope in degrees below which the operation must be applied. PLEASE NOTE: only works well with worlds created from high res (16-bit) height maps or sculpted manually in WorldPainter!
-        .onlyOnLayer(layer);
-        print(layer.dataSize)
-        if ((layer.dataSize == "BYTE" || layer.dataSize == "NIBBLE") && layerValue != null)
-            // @ts-ignore
-            filter.withValue(layerValue);   //TODO withValue crashes for "pine" layer, without doesnt apply to "pine" layer
-        // @ts-ignore
-        filter = filter.go();
-    }
-    print("filter = " + filter)
-    // @ts-ignore
-    wp.applyTerrain(terrain_idx) // The terrain type index to set
-    // @ts-ignore
-        .toWorld(world) // See "Loading a World" or "Creating a World from a Height Map"
-        .withFilter(filter)
-        .applyToSurface() // Optional. Mutually exclusive with applyToNether() and applyToEnd(). Indicates that the layer should be applied to the Surface dimension. This is the default
-     .go();
-     print("set terrain above " + aboveAngle + "deg to "+terrain_idx+ " on layer "+ layer + "="+ layerValue)
-}
 
 /**
  * 
@@ -91,8 +59,8 @@ function applyToMap(
     print("applied to" + x + "x" + y)
 }
 
-//let opList: Operation[] = parseJsonFromFile(filePath)
-//applyAllOperations(opList)
+let opList: Operation[] = parseJsonFromFile(filePath)
+applyAllOperations(opList)
 
 
 // @ts-ignore
@@ -123,8 +91,8 @@ function paintPines(x: number, y: number, dimension: any): void {
     )
 }
 
-let dim = world.getDimension(0)
-applyToMap(betweenSlopes, paintPines, dim)
+//let dim = world.getDimension(0)
+//applyToMap(betweenSlopes, paintPines, dim)
 
 
 

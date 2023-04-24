@@ -1,7 +1,4 @@
-function assert(exp: boolean) {
-    if (!exp)
-        throw  new Error("ASSERTION ERROR")
-}
+
 
 declare function print(mssg: string): void;
 
@@ -92,7 +89,7 @@ interface Terrain {
 class Operation implements OperationInterface {
     name: string;
     onFilters: FilterInterface[];
-    type: OperationType;
+    type!: OperationType;
 
     constructor(name: string, onFilters: FilterInterface[]) {
         this.name = name
@@ -230,9 +227,8 @@ enum Comparator {
 class Filter implements FilterInterface {
     id: string
     private lastPoint: [number, number] = [-1,-1]
-    private lastDecision: boolean
-    private lastValue: number
-    private inverted: InvertFilter
+    private lastDecision: boolean = false
+    private inverted: InvertFilter|undefined = undefined
     isInSelection(x: number, y: number, dimension: any): boolean {
         if (x == this.lastPoint[0] && y == this.lastPoint[1])
             return this.lastDecision
@@ -264,7 +260,7 @@ class StandardFilter extends  Filter {
     belowLevel: number
     aboveDegrees: number
     belowDegrees: number
-    onlyOnTerrain: Terrain
+    onlyOnTerrain: Terrain|null
 
     test(x: number, y: number, dimension: any): boolean {
         return (
