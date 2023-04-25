@@ -1,0 +1,49 @@
+{
+    "name": "example operations", 
+    "number": 45, 
+    "operations": [
+        {
+            (mandatory header of each operation)
+            "type": "terrain", 
+            "name": "all is grass", 
+
+            (operation type specific values)
+            "terrain": 0, 
+
+            (filter values, all optional)
+            "aboveLevel": -1, 
+            "belowLevel": -1, 
+            "aboveDegrees": -1, 
+            "belowDegrees": -1, 
+            "onlyOnTerrain": -1
+        }, 
+        {
+            "type": "terrain", 
+            "terrain": 5, 
+            "name": "slope sand", 
+            "aboveDegrees": 40, 
+            "belowDegrees": 50
+        }, 
+        {
+            "type": "terrain", 
+            "terrain": 75, 
+            "name": "cliff stone mix", 
+            "aboveDegrees": 50
+        }, 
+        {
+            "type": "terrain", 
+            "terrain": 40, 
+            "name": "high snow", 
+            "aboveLevel": 180
+        }, 
+        {
+            "type": "layer", 
+            "layerType": "Pines",
+            "layerValue": 7, 
+            "name": "middle ground pines",
+            "aboveLevel": 50,
+            "belowLevel": 90,
+            "belowDegrees": 60  
+        }
+    ]
+}
