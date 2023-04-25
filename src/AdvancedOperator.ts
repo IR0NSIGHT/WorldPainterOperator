@@ -13,8 +13,8 @@ const wp = wp;
 // @ts-ignore: world supplied by context
 const world = world;
 
-const assert = (exp: boolean) => {
-  if (!exp) throw new Error("ASSERTION ERROR");
+const assert = (exp: boolean, mssg?: string) => {
+  if (!exp) throw new Error("ASSERTION ERROR" + (mssg ? ": " + mssg : ""));
 };
 
 function isOperation(operation: object): operation is OperationInterface {
@@ -84,9 +84,8 @@ class StandardFilter extends Filter {
 
   private insideLevel(z: number) {
     return (
-      this.aboveLevel === -1 &&
-      this.aboveLevel < z &&
-      (this.belowLevel === -1 || this.belowLevel > z)
+      (this.aboveLevel === -1 || this.aboveLevel <= z) &&
+      (this.belowLevel === -1 || this.belowLevel >= z)
     );
   }
 
@@ -183,6 +182,51 @@ class InvertFilter extends Filter {
   }
 }
 
+function getLayerById(layerId: string): Layer {
+  print("find layer for id=" + layerId);
+  switch (layerId) {
+    case "Frost": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Frost.INSTANCE;
+
+    case "Caves": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Caves.INSTANCE;
+
+    case "Caverns": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Caverns.INSTANCE;
+
+    case "Chasms": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Chasms.INSTANCE;
+
+    case "Deciduous": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.DeciduousForest.INSTANCE;
+
+    case "Pines": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.PineForest.INSTANCE;
+
+    case "Swamp": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.SwampLand.INSTANCE;
+
+    case "Jungle": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Jungle.INSTANCE;
+
+    case "Void": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Void.INSTANCE;
+
+    case "Resources": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Resources.INSTANCE;
+
+    case "ReadOnly": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.ReadOnly.INSTANCE;
+
+    case "Annotations": // @ts-ignore
+      return org.pepsoft.worldpainter.layers.Annotations.INSTANCE;
+    default:
+      throw new TypeError(
+        "unknown/not implemented layer type given: " + layerId
+      );
+  }
+}
+
 class LayerFilter extends Filter {
   layer: Layer;
   layerValue: number;
@@ -235,13 +279,11 @@ function getNewFilter(
 ) {
   return new StandardFilter(
     id,
-    aboveLevel || aboveLevel == 0  ? aboveLevel : -1,
+    aboveLevel || aboveLevel == 0 ? aboveLevel : -1,
     belowLevel || belowLevel == 0 ? belowLevel : -1,
     aboveDegrees || aboveDegrees == 0 ? aboveDegrees : -1,
     belowDegrees || belowDegrees == 0 ? belowDegrees : -1,
-    onlyOnTerrain || onlyOnTerrain === 0
-      ? getTerrainById(onlyOnTerrain)
-      : null
+    onlyOnTerrain || onlyOnTerrain === 0 ? getTerrainById(onlyOnTerrain) : null
   );
 }
 
@@ -329,7 +371,7 @@ interface Layer {
 
 class LayerOperation extends Operation {
   layerValue: number;
-  layer: Layer | null;
+  layer: Layer;
 
   constructor(
     name: string,
@@ -338,13 +380,13 @@ class LayerOperation extends Operation {
     onFilters: FilterInterface[]
   ) {
     super(name, onFilters);
-    // @ts-ignore
     this.layer = layer;
     this.layerValue = layerValue;
     this.type = OperationType.setLayer;
   }
 
   apply(x: number, y: number, dimension: any): void {
+    //FIXME breaks for BIT_PER_CHUNK layers like frost, throws illegal arg exception
     dimension.setLayerValueAt(this.layer, x, y, this.layerValue);
   }
 
@@ -380,6 +422,22 @@ class TerrainOperation extends Operation {
 
 function fillWithValues() {}
 
+type configOperationHead = { type: string; name: string };
+type terrainConfigOperation = { terrain: number } & configOperation;
+type layerConfigOperation = {
+  layerType: string;
+  layerValue: number;
+} & configOperation;
+
+type configFilter = {
+  aboveLevel: number;
+  belowLevel: number;
+  aboveDegrees: number;
+  belowDegrees: number;
+  onlyOnTerrain: number;
+};
+type configOperation = configOperationHead & configFilter;
+
 function parseJsonFromFile(filePath: string): Array<OperationInterface> {
   // @ts-ignore
   var path = java.nio.file.Paths.get(filePath);
@@ -388,7 +446,7 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
   // @ts-ignore
   let jsonString: string = new java.lang.String(bytes);
   jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)"
-  let out: object = JSON.parse(jsonString);
+  let out: any = JSON.parse(jsonString);
   let opList: OperationInterface[] = [];
   let id = 0;
   const nextFilterId = () => {
@@ -397,24 +455,32 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
   };
 
   // @ts-ignore
-  for (var op: string of out.operations) {
+  var op: configOperation;
+  assert(out.operations);
+  //TODO parse shape of object, assert it has all required fields
+  for (op of out.operations) {
     assert(isOperation(op));
     print("parsed object of op: " + JSON.stringify(op));
     let tOp: OperationInterface;
 
     switch (op.type) {
       case OperationType.applyTerrain: {
-        if (op.name && (op.terrain || op.terrain === 0))
-          tOp = new TerrainOperation(op.name, getTerrainById(op.terrain), [
-            getNewFilter(
-              JSON.stringify(nextFilterId()),
-              op.aboveLevel,
-              op.belowLevel,
-              op.aboveDegrees,
-              op.belowDegrees,
-              op.onlyOnTerrain
-            ),
-          ]);
+        const terrainOp: terrainConfigOperation = op as terrainConfigOperation;
+        if (terrainOp.name && (terrainOp.terrain || terrainOp.terrain === 0))
+          tOp = new TerrainOperation(
+            terrainOp.name,
+            getTerrainById(terrainOp.terrain),
+            [
+              getNewFilter(
+                JSON.stringify(nextFilterId()),
+                op.aboveLevel,
+                op.belowLevel,
+                op.aboveDegrees,
+                op.belowDegrees,
+                op.onlyOnTerrain
+              ),
+            ]
+          );
         else
           print(
             "could not construct operation, illegal null value: " +
@@ -423,22 +489,31 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
         break;
       }
       case OperationType.setLayer: {
+        const layerOp: layerConfigOperation = op as layerConfigOperation;
         if (
-          op.name &&
-          (op.layer || op.layer === 0) &&
-          (op.layerValue || op.layerValue === 0)
-        )
-          tOp = new LayerOperation(op.name, op.layer, op.layerValue, [
-            getNewFilter(
-              JSON.stringify(nextFilterId()),
-              op.aboveLevel,
-              op.belowLevel,
-              op.aboveDegrees,
-              op.belowDegrees,
-              op.onlyOnTerrain
-            ),
-          ]);
-        else
+          layerOp.name &&
+          layerOp.layerType &&
+          (layerOp.layerValue || layerOp.layerValue === 0)
+        ) {
+          const javaLayer: Layer = getLayerById(layerOp.layerType);
+          assert(javaLayer != undefined, "layer is undefined");
+          print("using layer: " + javaLayer);
+          tOp = new LayerOperation(
+            layerOp.name,
+            javaLayer,
+            layerOp.layerValue,
+            [
+              getNewFilter(
+                JSON.stringify(nextFilterId()),
+                op.aboveLevel,
+                op.belowLevel,
+                op.aboveDegrees,
+                op.belowDegrees,
+                op.onlyOnTerrain
+              ),
+            ]
+          );
+        } else
           print(
             "could not construct operation, illegal null value: " +
               JSON.stringify(op)
@@ -447,7 +522,7 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
       }
       default: {
         print(
-          "ERROR invalid operation type: '" +
+          "ERROR unknown operation type: '" +
             op.type +
             "' in Operation " +
             op.name
