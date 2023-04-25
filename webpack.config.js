@@ -1,7 +1,10 @@
 const path = require("path");
+const { ESBuildMinifyPlugin } = require("esbuild-loader");
 
 module.exports = {
-  entry: "./dist/index.js",
+  entry: "./compiled/index.js",
+
+  mode: "development",
 
   output: {
     filename: "bundle.js",
@@ -26,5 +29,5 @@ module.exports = {
       // The environment supports template literals.
       templateLiteral: false,
     },
-  }
+  },
 };

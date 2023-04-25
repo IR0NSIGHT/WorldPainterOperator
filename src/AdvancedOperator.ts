@@ -1,23 +1,12 @@
-// script.name=Advanced Operations by IR0NSIGHT
-// script.description= executre multiple operations in a row based on a config file.//
-// script.param.file1.type=file
-// script.param.file1.description=Parameters can be optional
-// script.param.file1.optional=true
-// script.param.file1.default=\AdvancedOperator\Operations\example.json
-
 declare function print(mssg: string): void;
-// @ts-ignore: params supplied by context
-const params = params;
-// @ts-ignore: wp supplied by context
-const wp = wp;
-// @ts-ignore: world supplied by context
-const world = world;
 
 const assert = (exp: boolean, mssg?: string) => {
   if (!exp) throw new Error("ASSERTION ERROR" + (mssg ? ": " + mssg : ""));
 };
 
-function isOperation(operation: object): operation is OperationInterface {
+export function isOperation(
+  operation: object
+): operation is OperationInterface {
   let cast: OperationInterface = operation as OperationInterface;
   print(JSON.stringify(cast));
   return cast.name !== undefined;
@@ -334,7 +323,7 @@ enum OperationType {
   setLayer = "layer",
 }
 
-class Operation implements OperationInterface {
+export class Operation implements OperationInterface {
   name: string;
   onFilters: FilterInterface[];
   type!: OperationType;
@@ -438,7 +427,7 @@ type configFilter = {
 };
 type configOperation = configOperationHead & configFilter;
 
-function parseJsonFromFile(filePath: string): Array<OperationInterface> {
+export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
   // @ts-ignore
   var path = java.nio.file.Paths.get(filePath);
   // @ts-ignore
@@ -461,7 +450,7 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
   for (op of out.operations) {
     assert(isOperation(op));
     print("parsed object of op: " + JSON.stringify(op));
-    let tOp: OperationInterface;
+    let tOp: OperationInterface | null = null;
 
     switch (op.type) {
       case OperationType.applyTerrain: {
@@ -542,13 +531,13 @@ function parseJsonFromFile(filePath: string): Array<OperationInterface> {
  * apply operations as defined in object
  * @param {object} obj
  */
-function applyAllOperations(opList: OperationInterface[]) {
+export function applyAllOperations(opList: OperationInterface[]) {
   for (var i = 0; i < opList.length; i++) {
     opList[i].execute(1, 2, 3);
   }
 }
 
-function executeOperations(ops: OperationInterface[], dimension: any) {
+export function executeOperations(ops: OperationInterface[], dimension: any) {
   print("exectue all operations:");
   for (let op of ops) {
     print(op.description());
@@ -570,12 +559,3 @@ function executeOperations(ops: OperationInterface[], dimension: any) {
     }
   }
 }
-
-const filePath: string = params["file1"];
-
-let opList: Operation[] = parseJsonFromFile(filePath);
-opList.forEach((a: Operation) => assert(isOperation(a)));
-print("finished parsing operations, amount: " + opList.length);
-
-//@ts-ignore
-executeOperations(opList, dimension);
