@@ -26,18 +26,5 @@ module.exports = {
       // The environment supports template literals.
       templateLiteral: false,
     },
-  },
-  /*
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'babel-loader',
-        }
-      }
-    ]
   }
-  */
 };
