@@ -1,9 +1,3 @@
-// script.name=Advanced Operations by IR0NSIGHT
-// script.description= executre multiple operations in a row based on a config file.//
-// script.param.file1.type=file
-// script.param.file1.description=Parameters can be optional
-// script.param.file1.optional=true
-// script.param.file1.default=\AdvancedOperator\Operations\example.json
 
 import {
   Operation,

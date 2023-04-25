@@ -1,5 +1,4 @@
 const path = require("path");
-const { ESBuildMinifyPlugin } = require("esbuild-loader");
 
 module.exports = {
   entry: "./compiled/index.js",
