@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
+    "target": "es5",
+    "module": "ES6",
+    "outDir": "dist/AdvancedOperator",
     "noImplicitAny": true,
-    "removeComments": false,
-    "outDir": "C:/Users/Max1M/Documents/Worldpainter/scripts/advOperator",
-    "module": "CommonJS",
-    "target": "ES5"
   },
-  "files": [
-    "index.ts"
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }
