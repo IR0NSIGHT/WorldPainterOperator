@@ -1,12 +1,12 @@
 const path = require('path');
 
 module.exports = {
-  entry: './dist/AdvancedOperator.js',
+  entry: './dist/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-
+/*
   module: {
     rules: [
       {
@@ -18,4 +18,5 @@ module.exports = {
       }
     ]
   }
+  */
 };
