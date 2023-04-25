@@ -3,7 +3,7 @@
 // script.param.file1.type=file
 // script.param.file1.description=Parameters can be optional
 // script.param.file1.optional=true
-// script.param.file1.default=C:\Users\Max1M\Documents\Worldpainter\scripts\operations\test.json
+// script.param.file1.default=\AdvancedOperator\Operations\example.json
 
 declare function print(mssg: string): void;
 // @ts-ignore: params supplied by context
