@@ -13,7 +13,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/FileOperation"  ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
