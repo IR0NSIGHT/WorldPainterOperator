@@ -4,8 +4,8 @@ import { isOperation } from "./AdvancedOperator";
 import { parseJsonFromFile } from "./FileOperation/Parser";
 import { Operation, executeOperations } from "./Operation/Operation";
 import { assert } from "./assert";
+import { log } from "./log";
 
-declare function log(mssg: string): void;
 
 const filePath: string = params["file1"];
 
