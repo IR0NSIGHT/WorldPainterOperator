@@ -1,0 +1,43 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "nashorn": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "ignorePatterns": ["**.js"],
+    "overrides": [
+        {
+            "files": [
+                "src/**/*.ts"
+            ]
+        }
+    ],
+    "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "@typescript-eslint/ban-ts-comment": [
+            "error",
+            {
+                "ts-ignore": "allow-with-description"
+            }
+        ]
+    }
+}
