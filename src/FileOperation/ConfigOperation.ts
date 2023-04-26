@@ -8,7 +8,7 @@ type configFilter = {
   onlyOnTerrain: number;
 };
 
-export type terrainConfigOperation = { terrain: number } & configOperation;
+export type terrainConfigOperation = { terrain: number|number[] } & configOperation;
 
 export type configOperation = configOperationHead & configFilter;
 

@@ -2,22 +2,42 @@ import { isOperation } from "../AdvancedOperator";
 import { getNewFilter } from "../Filter/Filter";
 import { Layer, getLayerById } from "../Layer/Layer";
 import { TerrainOperation, LayerOperation } from "../Operation/Operation";
-import { OperationInterface, OperationType } from "../Operation/OperationInterface";
-import { getTerrainById } from "../Terrain/Terrain";
+import {
+  OperationInterface,
+  OperationType,
+} from "../Operation/OperationInterface";
+import { Terrain, getTerrainById } from "../Terrain/Terrain";
 import { assert } from "../assert";
 import { log } from "../log";
-import { terrainConfigOperation, layerConfigOperation, configOperation } from "./ConfigOperation";
+import {
+  terrainConfigOperation,
+  layerConfigOperation,
+  configOperation,
+} from "./ConfigOperation";
 
-type ParsingError = { mssg: string }
+type ParsingError = { mssg: string };
 
-const parseTerrainOp = (configOp: terrainConfigOperation): TerrainOperation | ParsingError => {
+export const parseTerrainArray = (
+  terrain: number | number[],
+  getTerrainById: (id: number) => Terrain
+): Terrain[] => {
+  if (Array.isArray(terrain)) {
+    return terrain.map((a) => getTerrainById(a));
+  } else {
+    return [getTerrainById(terrain)];
+  }
+};
+
+const parseTerrainOp = (
+  configOp: terrainConfigOperation
+): TerrainOperation | ParsingError => {
   //check all required fields are present
   if (!(configOp.name && (configOp.terrain || configOp.terrain === 0)))
     return { mssg: "required field is not present." };
 
   const tOp: TerrainOperation = new TerrainOperation(
     configOp.name,
-    getTerrainById(configOp.terrain),
+    parseTerrainArray(configOp.terrain, getTerrainById),
     [
       getNewFilter(
         JSON.stringify("TO BE DONE OWO"),
@@ -30,7 +50,7 @@ const parseTerrainOp = (configOp: terrainConfigOperation): TerrainOperation | Pa
     ]
   );
   return tOp;
-}
+};
 
 export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
   // @ts-ignore java object
@@ -60,10 +80,8 @@ export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
       case OperationType.applyTerrain: {
         const terrainOp: terrainConfigOperation = op as terrainConfigOperation;
         const parsedOpOrError = parseTerrainOp(terrainOp);
-        if (parsedOpOrError instanceof TerrainOperation)
-          tOp = parsedOpOrError
-        else
-          log(parsedOpOrError.mssg);
+        if (parsedOpOrError instanceof TerrainOperation) tOp = parsedOpOrError;
+        else log(parsedOpOrError.mssg);
         break;
       }
       case OperationType.setLayer: {
@@ -94,16 +112,16 @@ export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
         } else
           log(
             "could not construct operation, illegal null value: " +
-            JSON.stringify(op)
+              JSON.stringify(op)
           );
         break;
       }
       default: {
         log(
           "ERROR unknown operation type: '" +
-          op.type +
-          "' in Operation " +
-          op.name
+            op.type +
+            "' in Operation " +
+            op.name
         );
         continue;
       }
