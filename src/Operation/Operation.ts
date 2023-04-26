@@ -1,4 +1,3 @@
-import { assert } from "console";
 import { FilterInterface } from "../Filter/FilterInterface";
 import { Layer } from "../Layer/Layer";
 import { Terrain } from "../Terrain/Terrain";
@@ -77,14 +76,10 @@ export function sample<Type>(arr: Type[]): Type {
 }
 
 export class TerrainOperation extends Operation {
-  private readonly terrain: Terrain[];
+  readonly terrain: Terrain[];
 
   constructor(name: string, terrain: Terrain[], onFilters: FilterInterface[]) {
-    super(name, onFilters);
-    assert(
-      terrain.length > 0,
-      "was given terrain array of size zero for operation " + name
-    );
+    super(name, onFilters); 
     this.terrain = terrain;
     this.type = OperationType.applyTerrain;
   }
