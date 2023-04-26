@@ -1,11 +1,8 @@
-
-
 import { isOperation } from "./AdvancedOperator";
 import { parseJsonFromFile } from "./FileOperation/Parser";
 import { Operation, executeOperations } from "./Operation/Operation";
 import { assert } from "./assert";
 import { log } from "./log";
-
 
 const filePath: string = params["file1"];
 

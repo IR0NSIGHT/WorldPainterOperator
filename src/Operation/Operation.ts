@@ -1,7 +1,7 @@
+import { Dimension } from "../Dimension";
 import { FilterInterface } from "../Filter/FilterInterface";
 import { Layer } from "../Layer/Layer";
 import { Terrain } from "../Terrain/Terrain";
-import { Dimension } from "../global";
 import { log } from "../log";
 import { OperationInterface, OperationType } from "./OperationInterface";
 
@@ -79,7 +79,7 @@ export class TerrainOperation extends Operation {
   readonly terrain: Terrain[];
 
   constructor(name: string, terrain: Terrain[], onFilters: FilterInterface[]) {
-    super(name, onFilters); 
+    super(name, onFilters);
     this.terrain = terrain;
     this.type = OperationType.applyTerrain;
   }
