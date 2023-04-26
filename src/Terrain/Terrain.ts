@@ -1,6 +1,6 @@
 export function getTerrainById(terrainId: number): Terrain {
-    // @ts-ignore
-    let terrain = org.pepsoft.worldpainter.Terrain.VALUES[terrainId];
+    // @ts-ignore worldpainter java object
+    const terrain = org.pepsoft.worldpainter.Terrain.VALUES[terrainId];
     return terrain;
   }
   

@@ -15,20 +15,22 @@ export class Operation implements OperationInterface {
       log("new Operation: " + name);
       onFilters.forEach((a: FilterInterface) => log("filter id=" + a.id));
     }
+    apply(x: number, y: number, dimension: any): void {
+        throw new Error("Method not implemented." +x+y+dimension);  //eslint will complain if the vars are not used
+    }
   
     execute(x: number, y: number, dimension: any): void {
       if (this.passFilter(x, y, dimension)) this.apply(x, y, dimension);
     }
   
     passFilter(x: number, y: number, dimension: any) {
-      for (let f of this.onFilters) {
+      for (const f of this.onFilters) {
         //TODO allow complex forms: (A&B&C)||(D&E&!F) for filter combination
         if (!f.isInSelection(x, y, dimension)) return false;
       }
       return true;
     }
   
-    apply(x: number, y: number, dimension: any): void {}
   
     description(): string {
       return "GenericOperation";
@@ -89,9 +91,9 @@ export class Operation implements OperationInterface {
 
   export function executeOperations(ops: OperationInterface[], dimension: any) {
     log("exectue all operations:");
-    for (let op of ops) {
+    for (const op of ops) {
       log(op.description());
-      for (let f of op.onFilters) {
+      for (const f of op.onFilters) {
         log("\tFilter: " + f.id);
       }
     }
@@ -100,10 +102,10 @@ export class Operation implements OperationInterface {
     const endX: number = startX + dimension.getWidth() * 128;
     const endY: number = startY + dimension.getHeight() * 128;
     let x,
-      y: number = 0;
+      y = 0;
     for (x = startX; x < endX; x++) {
       for (y = startY; y < endY; y++) {
-        for (let op of ops) {
+        for (const op of ops) {
           op.execute(x, y, dimension);
         }
       }

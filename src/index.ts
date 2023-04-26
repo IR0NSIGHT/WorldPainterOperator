@@ -9,7 +9,7 @@ declare function log(mssg: string): void;
 
 const filePath: string = params["file1"];
 
-let opList: Operation[] = parseJsonFromFile(filePath);
+const opList: Operation[] = parseJsonFromFile(filePath);
 opList.forEach((a: Operation) => assert(isOperation(a), "invalid operation"));
 log("finished parsing operations, amount: " + opList.length);
 

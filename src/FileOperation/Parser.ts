@@ -6,7 +6,7 @@ import { OperationInterface, OperationType } from "../Operation/OperationInterfa
 import { getTerrainById } from "../Terrain/Terrain";
 import { assert } from "../assert";
 import { log } from "../log";
-import { terrainConfigOperation, layerConfigOperation } from "./ConfigOperation";
+import { terrainConfigOperation, layerConfigOperation, configOperation } from "./ConfigOperation";
 
 type ParsingError = { mssg: string }
 
@@ -33,23 +33,22 @@ const parseTerrainOp = (configOp: terrainConfigOperation): TerrainOperation | Pa
 }
 
 export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
-  // @ts-ignore
-  var path = java.nio.file.Paths.get(filePath);
-  // @ts-ignore
-  var bytes = java.nio.file.Files.readAllBytes(path);
-  // @ts-ignore
+  // @ts-ignore java object
+  const path = java.nio.file.Paths.get(filePath);
+  // @ts-ignore java object
+  const bytes = java.nio.file.Files.readAllBytes(path);
+  // @ts-ignore java object
   let jsonString: string = new java.lang.String(bytes);
   jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)"
-  let out: any = JSON.parse(jsonString);
-  let opList: OperationInterface[] = [];
+  const out: any = JSON.parse(jsonString);
+  const opList: OperationInterface[] = [];
   let id = 0;
   const nextFilterId = () => {
     id++;
     return id;
   };
 
-  // @ts-ignore
-  var op: configOperation;
+  let op: configOperation;
   assert(out.operations);
   //TODO parse shape of object, assert it has all required fields
   for (op of out.operations) {

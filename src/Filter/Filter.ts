@@ -5,7 +5,7 @@ import { Comparator, FilterInterface } from "./FilterInterface";
 class Filter implements FilterInterface {
     id: string;
     private lastPoint: [number, number] = [-1, -1];
-    private lastDecision: boolean = false;
+    private lastDecision = false;
     private inverted: InvertFilter | undefined = undefined;
     isInSelection(x: number, y: number, dimension: any): boolean {
         if (x == this.lastPoint[0] && y == this.lastPoint[1])
@@ -17,7 +17,7 @@ class Filter implements FilterInterface {
         }
     }
 
-    test(x: number, y: number, dimension: any) {
+    test(_x: number, _y: number, _dimension: any) {
         return false;
     }
 
@@ -88,8 +88,8 @@ export class StandardFilter extends Filter {
 
 export class RandomFilter extends Filter {
     chance: number;
-    test(x: number, y: number, dimension: any): boolean {
-        let point = Math.random() * 100;
+    test(_x: number, _y: number, _dimension: any): boolean {
+        const point = Math.random() * 100;
         return point < this.chance;
     }
 
@@ -105,7 +105,7 @@ export class PerlinFilter extends Filter {
     threshold: number;
     amplitude: number;
 
-    test(x: number, y: number, dimension: any): boolean {
+    test(x: number, y: number, _dimension: any): boolean {
         return this.getValueAt(x, y) > 0;
     }
 
@@ -124,7 +124,7 @@ export class PerlinFilter extends Filter {
         amplitude: number
     ) {
         super("perlin");
-        // @ts-ignore
+        // @ts-ignore java object provided by WP
         this.perlinNoise = new org.pepsoft.util.PerlinNoise(seed);
         this.size = size;
         this.threshold = threshold;
@@ -146,7 +146,7 @@ export class InvertFilter extends Filter {
     }
 }
 
-class LayerFilter extends Filter {
+export class LayerFilter extends Filter {
     layer: Layer;
     layerValue: number;
     comparator: Comparator;
