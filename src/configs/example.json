@@ -2,6 +2,7 @@
     "name": "example operations", 
     "number": 45, 
     "operations": [
+        { "layer": [["Deciduous", 0],["Pines", 0]], "name": "remove all decidous" },
         {
             (mandatory header of each operation)
             "name": "grass plains", 
@@ -59,11 +60,18 @@
             "name": "dead operation"
         },
         {
-            "layer": ["Deciduous",8],
-            "name": "middle ground tree",
+            "layer": ["Deciduous", 8], 
+            "perlin": {
+                "seed"     : 420.0, 
+                "scale"    : 100.0, 
+                "amplitude":   1.0, 
+                "threshold":   0.5  
+            }, 
             "aboveLevel": 70,
             "belowLevel": 90,
-            "belowDegrees": 45  
+            "belowDegrees": 40,
+            "name": "middle ground tree"
         }
+    
     ]
 }

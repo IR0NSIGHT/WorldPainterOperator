@@ -1,4 +1,3 @@
-import { getNewFilter } from "../Filter/Filter";
 import { getLayerById } from "../Layer/Layer";
 import { GeneralOperation } from "../Operation/Operation";
 import { Terrain, getTerrainById } from "../Terrain/Terrain";
@@ -6,7 +5,9 @@ import { log, logError } from "../log";
 import { configOperation } from "./ConfigOperation";
 import { parseLayers } from "./ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
-import { safeParseNumber } from "./ParseFilter";
+import { parsePerlin, safeParseNumber } from "./ParseFilter";
+import { StandardFilter } from "../Filter/Filter";
+import { PerlinFilter } from "../Filter/PerlinFilter";
 
 export type ParsingError = { mssg: string };
 export function isParsingError(error: any): error is ParsingError {
@@ -46,13 +47,14 @@ function loadConfig(filePath: string): config | ParsingError {
   try {
     // @ts-ignore java object
     let jsonString: string = new java.lang.String(bytes);
-    jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)"
+    jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)" //TODO json with comments format
     const out: any = JSON.parse(jsonString);
     return out;
   } catch (e) {
     return { mssg: "could not parse config from json" };
   }
 }
+
 export function parseJsonFromFile(filePath: string): GeneralOperation[] {
   const allOperations: GeneralOperation[] = [];
   let id = 0;
@@ -73,14 +75,18 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
   for (op of configOperations) {
     const layers = parseLayers(op.layer, getLayerById);
     const terrains = parseTerrains(op.terrain, getTerrainById);
+    const perlin = parsePerlin(op.perlin);
 
-    if (isParsingError(layers)) {
-      log(layers.mssg);
-    }
-    if (isParsingError(terrains)) {
-      log(terrains.mssg);
-    }
-    if (isParsingError(layers) || isParsingError(terrains)) {
+    [layers, terrains, perlin].forEach((a) => {
+      if (isParsingError(a)) {
+        logError(a.mssg);
+      }
+    });
+    if (
+      isParsingError(layers) ||
+      isParsingError(terrains) ||
+      isParsingError(perlin)
+    ) {
       continue;
     }
 
@@ -89,20 +95,30 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       continue;
     }
 
-    const filter: FilterInterface = getNewFilter(
+    const basicFilter: FilterInterface = new StandardFilter(
       JSON.stringify(nextFilterId()),
       safeParseNumber(op.aboveLevel),
       safeParseNumber(op.belowLevel),
       safeParseNumber(op.aboveDegrees),
       safeParseNumber(op.belowDegrees),
-      safeParseNumber(op.onlyOnTerrain)
+      getTerrainById(safeParseNumber(op.onlyOnTerrain))
     );
 
+    const opFilters = [basicFilter];
+    if (perlin !== undefined) {
+      const perlinFilter = new PerlinFilter(
+        perlin.seed,
+        perlin.scale,
+        perlin.threshold,
+        perlin.amplitude
+      );
+      opFilters.push(perlinFilter);
+    }
     const operation: GeneralOperation = {
       name: op.name,
       terrain: terrains,
       layer: layers,
-      filter: [filter],
+      filter: opFilters,
     };
     allOperations.push(operation);
   }

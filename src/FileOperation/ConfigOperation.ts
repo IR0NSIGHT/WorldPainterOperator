@@ -1,4 +1,6 @@
-type configOperationHead = { name: string; layer: any, terrain: any };
+import { configPerlin } from "./ParseFilter";
+
+type configOperationHead = { name: string; layer: any; terrain: any };
 
 type configFilter = {
   aboveLevel: number;
@@ -6,6 +8,7 @@ type configFilter = {
   aboveDegrees: number;
   belowDegrees: number;
   onlyOnTerrain: number;
+  perlin: configPerlin;
 };
 
 export type terrainConfigOperation = {

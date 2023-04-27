@@ -2,7 +2,6 @@ import { Dimension } from "../Dimension";
 import { LayerSetting } from "../FileOperation/ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
 import { Terrain } from "../Terrain/Terrain";
-import { assert } from "../assert";
 import { log } from "../log";
 
 const testOperationFilters = (
@@ -11,7 +10,8 @@ const testOperationFilters = (
   op: GeneralOperation,
   dimension: Dimension
 ): boolean => {
-  return op.filter.every((a) => a.isInSelection(x, y, dimension));
+  const resultArr = op.filter.map((a) => a.isInSelection(x, y, dimension));
+  return resultArr.every((a) => a);
 };
 
 export type GeneralOperation = {

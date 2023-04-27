@@ -1,8 +1,8 @@
 import { Layer } from "../Layer/Layer";
-import { Terrain, getTerrainById } from "../Terrain/Terrain";
+import { Terrain } from "../Terrain/Terrain";
 import { Comparator, FilterInterface } from "./FilterInterface";
 
-class Filter implements FilterInterface {
+export class Filter implements FilterInterface {
   id: string;
   private lastPoint: [number, number] = [-1, -1];
   private lastDecision = false;
@@ -99,39 +99,6 @@ export class RandomFilter extends Filter {
   }
 }
 
-export class PerlinFilter extends Filter {
-  perlinNoise: any;
-  size: number;
-  threshold: number;
-  amplitude: number;
-
-  test(x: number, y: number, _dimension: any): boolean {
-    return this.getValueAt(x, y) > 0;
-  }
-
-  private getValueAt(x: number, y: number): number {
-    return (
-      this.amplitude *
-      (this.perlinNoise.getPerlinNoise(x / this.size, y / this.size) +
-        (this.threshold - 0.5))
-    );
-  }
-
-  constructor(
-    seed: number,
-    size: number,
-    threshold: number,
-    amplitude: number
-  ) {
-    super("perlin");
-    // @ts-ignore java object provided by WP
-    this.perlinNoise = new org.pepsoft.util.PerlinNoise(seed);
-    this.size = size;
-    this.threshold = threshold;
-    this.amplitude = amplitude;
-  }
-}
-
 export class InvertFilter extends Filter {
   filter: FilterInterface;
   isInSelection(x: number, y: number, dimension: any): boolean {
@@ -186,22 +153,4 @@ export class LayerFilter extends Filter {
         throw new TypeError("invalid comparator");
     }
   }
-}
-
-export function getNewFilter(
-  id: string,
-  aboveLevel: number,
-  belowLevel: number,
-  aboveDegrees: number,
-  belowDegrees: number,
-  onlyOnTerrain: number
-) {
-  return new StandardFilter(
-    id,
-    aboveLevel,
-    belowLevel,
-    aboveDegrees,
-    belowDegrees,
-    getTerrainById(onlyOnTerrain)
-  );
 }
