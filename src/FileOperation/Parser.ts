@@ -1,135 +1,109 @@
-import { isOperation } from "../AdvancedOperator";
 import { getNewFilter } from "../Filter/Filter";
-import { Layer, getLayerById } from "../Layer/Layer";
-import { TerrainOperation, LayerOperation } from "../Operation/Operation";
-import {
-  OperationInterface,
-  OperationType,
-} from "../Operation/OperationInterface";
+import { getLayerById } from "../Layer/Layer";
+import { GeneralOperation } from "../Operation/Operation";
 import { Terrain, getTerrainById } from "../Terrain/Terrain";
-import { assert } from "../assert";
-import { log } from "../log";
-import {
-  terrainConfigOperation,
-  layerConfigOperation,
-  configOperation,
-} from "./ConfigOperation";
+import { log, logError } from "../log";
+import { configOperation } from "./ConfigOperation";
+import { parseLayers } from "./ParseLayer";
+import { FilterInterface } from "../Filter/FilterInterface";
 
-type ParsingError = { mssg: string };
-
-export const parseTerrainArray = (
+export type ParsingError = { mssg: string };
+export function isParsingError(error: any): error is ParsingError {
+  return (
+    typeof error === "object" &&
+    error.mssg != undefined &&
+    typeof error.mssg === "string"
+  );
+}
+export const parseTerrains = (
   terrain: number | number[],
   getTerrainById: (id: number) => Terrain
-): Terrain[] => {
-  if (Array.isArray(terrain)) {
+): Terrain[] | ParsingError => {
+  if (Array.isArray(terrain) && terrain.every((a) => typeof a === "number")) {
     return terrain.map((a) => getTerrainById(a));
-  } else {
-    return [getTerrainById(terrain)];
+  }
+  if (typeof terrain === "number") return [getTerrainById(terrain)];
+  if (terrain === undefined) return [];
+  else {
+    return { mssg: "could not parse terrain: " + terrain };
   }
 };
 
-const parseTerrainOp = (
-  configOp: terrainConfigOperation
-): TerrainOperation | ParsingError => {
-  //check all required fields are present
-  if (!(configOp.name && (configOp.terrain || configOp.terrain === 0)))
-    return { mssg: "required field is not present." };
+type config = { operations: configOperation[] };
 
-  const tOp: TerrainOperation = new TerrainOperation(
-    configOp.name,
-    parseTerrainArray(configOp.terrain, getTerrainById),
-    [
-      getNewFilter(
-        JSON.stringify("TO BE DONE OWO"),
-        configOp.aboveLevel,
-        configOp.belowLevel,
-        configOp.aboveDegrees,
-        configOp.belowDegrees,
-        configOp.onlyOnTerrain
-      ),
-    ]
-  );
-  return tOp;
-};
+function loadConfig(filePath: string): config | ParsingError {
+  let bytes;
+  try {
+    // @ts-ignore java object
+    const path = java.nio.file.Paths.get(filePath);
+    // @ts-ignore java object
+    bytes = java.nio.file.Files.readAllBytes(path);
+  } catch (e) {
+    return { mssg: "Could not find or load file from:" + filePath };
+  }
 
-export function parseJsonFromFile(filePath: string): Array<OperationInterface> {
-  // @ts-ignore java object
-  const path = java.nio.file.Paths.get(filePath);
-  // @ts-ignore java object
-  const bytes = java.nio.file.Files.readAllBytes(path);
-  // @ts-ignore java object
-  let jsonString: string = new java.lang.String(bytes);
-  jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)"
-  const out: any = JSON.parse(jsonString);
-  const opList: OperationInterface[] = [];
+  try {
+    // @ts-ignore java object
+    let jsonString: string = new java.lang.String(bytes);
+    jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)"
+    const out: any = JSON.parse(jsonString);
+    return out;
+  } catch (e) {
+    return { mssg: "could not parse config from json" };
+  }
+}
+export function parseJsonFromFile(filePath: string): GeneralOperation[] {
+  const allOperations: GeneralOperation[] = [];
   let id = 0;
   const nextFilterId = () => {
     id++;
     return id;
   };
 
-  let op: configOperation;
-  assert(out.operations);
-  //TODO parse shape of object, assert it has all required fields
-  for (op of out.operations) {
-    assert(isOperation(op));
-    log("parsed object of op: " + JSON.stringify(op));
-    let tOp: OperationInterface | null = null;
-
-    switch (op.type) {
-      case OperationType.applyTerrain: {
-        const terrainOp: terrainConfigOperation = op as terrainConfigOperation;
-        const parsedOpOrError = parseTerrainOp(terrainOp);
-        if (parsedOpOrError instanceof TerrainOperation) tOp = parsedOpOrError;
-        else log(parsedOpOrError.mssg);
-        break;
-      }
-      case OperationType.setLayer: {
-        const layerOp: layerConfigOperation = op as layerConfigOperation;
-        if (
-          layerOp.name &&
-          layerOp.layerType &&
-          (layerOp.layerValue || layerOp.layerValue === 0)
-        ) {
-          const javaLayer: Layer = getLayerById(layerOp.layerType);
-          assert(javaLayer != undefined, "layer is undefined");
-          log("using layer: " + javaLayer);
-          tOp = new LayerOperation(
-            layerOp.name,
-            javaLayer,
-            layerOp.layerValue,
-            [
-              getNewFilter(
-                JSON.stringify(nextFilterId()),
-                op.aboveLevel,
-                op.belowLevel,
-                op.aboveDegrees,
-                op.belowDegrees,
-                op.onlyOnTerrain
-              ),
-            ]
-          );
-        } else
-          log(
-            "could not construct operation, illegal null value: " +
-              JSON.stringify(op)
-          );
-        break;
-      }
-      default: {
-        log(
-          "ERROR unknown operation type: '" +
-            op.type +
-            "' in Operation " +
-            op.name
-        );
-        continue;
-      }
-    }
-    if (tOp) {
-      opList.push(tOp);
-      log("add valid op:\n" + JSON.stringify(tOp));
-    }
+  const loadedConfig = loadConfig(filePath);
+  if (isParsingError(loadedConfig)) {
+    logError(loadedConfig.mssg);
+    return [];
   }
-  return opList;
+
+  const configOperations: configOperation[] = loadedConfig.operations;
+
+  let op: configOperation;
+  for (op of configOperations) {
+    const layers = parseLayers(op.layer, getLayerById);
+    const terrains = parseTerrains(op.terrain, getTerrainById);
+
+    if (isParsingError(layers)) {
+      log(layers.mssg);
+    }
+    if (isParsingError(terrains)) {
+      log(terrains.mssg);
+    }
+    if (isParsingError(layers) || isParsingError(terrains)) {
+      continue;
+    }
+
+    if (layers.length == 0 && terrains.length == 0) {
+      log("skip operation with no effect: " + op.name);
+      continue;
+    }
+
+    const filter: FilterInterface = getNewFilter(
+      JSON.stringify(nextFilterId()),
+      op.aboveLevel,
+      op.belowLevel,
+      op.aboveDegrees,
+      op.belowDegrees,
+      op.onlyOnTerrain
+    );
+
+    const operation: GeneralOperation = {
+      name: op.name,
+      terrain: terrains,
+      layer: layers,
+      filter: [filter],
+    };
+    allOperations.push(operation);
+  }
+  return allOperations;
 }

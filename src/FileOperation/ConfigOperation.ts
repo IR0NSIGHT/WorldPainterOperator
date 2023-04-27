@@ -1,4 +1,4 @@
-type configOperationHead = { type: string; name: string };
+type configOperationHead = { name: string; layer: any, terrain: any };
 
 type configFilter = {
   aboveLevel: number;
@@ -8,14 +8,13 @@ type configFilter = {
   onlyOnTerrain: number;
 };
 
-export type terrainConfigOperation = { terrain: number|number[] } & configOperation;
+export type terrainConfigOperation = {
+  terrain: number | number[];
+} & configOperation;
 
 export type configOperation = configOperationHead & configFilter;
 
 export type layerConfigOperation = {
-    layerType: string;
-    layerValue: number;
-  } & configOperation;
-  
-
-
+  layerType: string;
+  layerValue: number;
+} & configOperation;

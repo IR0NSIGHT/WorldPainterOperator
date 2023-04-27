@@ -9,7 +9,7 @@
 
             (operation type specific values)
             "terrain": [0,0,0,4,4,100], 
-
+            "layer": ["Annotations",0],
             (filter values, all optional)
             "aboveLevel": -1, 
             "belowLevel": -1, 
@@ -54,18 +54,19 @@
             "belowDegrees": 60
         }, 
         {
-            "type": "layer", 
-            "layerType": "Pines",
-            "layerValue": 7, 
+            "layer": ["Pines",7],
+            "terrain" : [0],
             "name": "high ground pines",
             "aboveLevel": 90,
             "belowLevel": 150,
             "belowDegrees": 40  
         },
         {
+            "name": "dead operation"
+        },
+        {
             "type": "layer", 
-            "layerType": "Deciduous",
-            "layerValue": 8, 
+            "layer": ["Deciduous",8],
             "name": "middle ground tree",
             "aboveLevel": 70,
             "belowLevel": 90,

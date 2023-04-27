@@ -1,5 +1,5 @@
 import { Terrain } from "../Terrain/Terrain";
-import { parseTerrainArray } from "./Parser";
+import { parseTerrains } from "./Parser";
 
 describe("parse config", () => {
   test("parse multi entry terrain array", () => {
@@ -13,7 +13,7 @@ describe("parse config", () => {
       return myTerrain(id.toString());
     };
 
-    const parsed = parseTerrainArray([0, 1, 2, 0, 1, 2], getTerrainById);
+    const parsed = parseTerrains([0, 1, 2, 0, 1, 2], getTerrainById);
 
     expect(parsed).toHaveLength(6);
   });
@@ -29,7 +29,7 @@ describe("parse config", () => {
       return myTerrain(id.toString());
     };
 
-    const parsed = parseTerrainArray(1, getTerrainById);
+    const parsed = parseTerrains(1, getTerrainById);
 
     expect(parsed).toHaveLength(1);
   });
