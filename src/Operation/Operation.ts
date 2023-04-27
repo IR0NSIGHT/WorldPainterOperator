@@ -38,10 +38,10 @@ const applyOperation = (
     const terrainSample = sample(op.terrain);
     dimension.setTerrainAt(x, y, terrainSample);
   }
-  if (op.layer.length != 0) {
-    const sampledLayer: LayerSetting = sample(op.layer);
-    dimension.setLayerValueAt(sampledLayer.layer, x, y, sampledLayer.value);
-  }
+
+  op.layer.forEach((a) => {
+    dimension.setLayerValueAt(a.layer, x, y, a.value);
+  });
 };
 
 export function sample<Type>(arr: Type[]): Type {

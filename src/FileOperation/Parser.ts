@@ -6,6 +6,7 @@ import { log, logError } from "../log";
 import { configOperation } from "./ConfigOperation";
 import { parseLayers } from "./ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
+import { safeParseNumber } from "./ParseFilter";
 
 export type ParsingError = { mssg: string };
 export function isParsingError(error: any): error is ParsingError {
@@ -90,11 +91,11 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
 
     const filter: FilterInterface = getNewFilter(
       JSON.stringify(nextFilterId()),
-      op.aboveLevel,
-      op.belowLevel,
-      op.aboveDegrees,
-      op.belowDegrees,
-      op.onlyOnTerrain
+      safeParseNumber(op.aboveLevel),
+      safeParseNumber(op.belowLevel),
+      safeParseNumber(op.aboveDegrees),
+      safeParseNumber(op.belowDegrees),
+      safeParseNumber(op.onlyOnTerrain)
     );
 
     const operation: GeneralOperation = {
