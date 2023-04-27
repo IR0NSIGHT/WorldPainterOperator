@@ -5,10 +5,10 @@
         {
             (mandatory header of each operation)
             "type": "terrain", 
-            "name": "all is grass", 
+            "name": "grass plains", 
 
             (operation type specific values)
-            "terrain": 0, 
+            "terrain": [0,0,0,4,4,100], 
 
             (filter values, all optional)
             "aboveLevel": -1, 
@@ -19,31 +19,57 @@
         }, 
         {
             "type": "terrain", 
-            "terrain": 5, 
-            "name": "slope sand", 
+            "terrain": [0,0,0,34,34,5], 
+            "name": "slope", 
             "aboveDegrees": 40, 
             "belowDegrees": 50
         }, 
         {
             "type": "terrain", 
-            "terrain": 75, 
-            "name": "cliff stone mix", 
+            "terrain": [36,36,36,36,0,2,30], 
+            "name": "beach", 
+            "belowDegrees": 30,
+            "aboveLevel": 58,
+            "belowLevel": 65
+        }, 
+        {
+            "type": "terrain", 
+            "terrain": [28,30,31,72,74,28,30,31,72,74,28,30,31,72,74,0], 
+            "name": "cliff", 
             "aboveDegrees": 50
         }, 
         {
             "type": "terrain", 
             "terrain": 40, 
             "name": "high snow", 
-            "aboveLevel": 180
+            "aboveLevel": 180,
+            "belowDegrees": 60
+        }, 
+        {
+            "type": "terrain", 
+            "terrain": [0,40], 
+            "name": "snow border", 
+            "belowLevel":180,
+            "aboveLevel": 170,
+            "belowDegrees": 60
         }, 
         {
             "type": "layer", 
             "layerType": "Pines",
             "layerValue": 7, 
-            "name": "middle ground pines",
-            "aboveLevel": 50,
+            "name": "high ground pines",
+            "aboveLevel": 90,
+            "belowLevel": 150,
+            "belowDegrees": 40  
+        },
+        {
+            "type": "layer", 
+            "layerType": "Deciduous",
+            "layerValue": 8, 
+            "name": "middle ground tree",
+            "aboveLevel": 70,
             "belowLevel": 90,
-            "belowDegrees": 60  
+            "belowDegrees": 45  
         }
     ]
 }
