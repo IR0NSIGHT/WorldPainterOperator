@@ -16,4 +16,6 @@ jobs:
       - name: test perm shell
         run: mkdir -p ./hello/world/owo & ls & ls -R hello/
       - name: test perm npm
-        run: npm run copyConfigs & ls -R dist/
+        run: npm run copyConfigs 
+      - name: list dist
+        run: ls -R dist/
