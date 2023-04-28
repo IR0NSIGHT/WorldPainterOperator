@@ -2,7 +2,10 @@
 
 # Define the paths to the header and bundle files
 header="src/header.js"
-bundle="dist/bundle.js"
+bundle="dist/AdvancedOperator/AdvancedOperator.js"
+
+# Make the bundle file writable
+chmod +w "$bundle"
 
 # Create a temporary file for the updated bundle
 tmpfile=$(mktemp)

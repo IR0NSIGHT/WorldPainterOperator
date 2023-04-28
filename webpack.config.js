@@ -6,8 +6,9 @@ module.exports = {
   mode: "development",
 
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "dist"),
+    filename: "AdvancedOperator.js",
+    path: path.resolve(__dirname, "dist/AdvancedOperator"),
+    clean: true,
     environment: {
       // The environment supports arrow functions ('() => { ... }').
       arrowFunction: false,
