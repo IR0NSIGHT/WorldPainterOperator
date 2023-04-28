@@ -17,6 +17,8 @@ jobs:
         run: npm run copyConfigs 
       - name: list dist
         run: ls -R dist/
+      - name: "install"
+        run: npm install
       - name: compile
         run: mkdir compiled & npm run compile
       - name: list compiled
