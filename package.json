@@ -5,13 +5,13 @@
   "main": "index.js", 
   "scripts": {
     "compile": "tsc -p ./tsconfig.json", 
-    "copyConfigs": "mkdir ./dist/AdvancedOperator/configs & cp -r ./src/configs ./dist/AdvancedOperator/configs", 
+    "copyConfigs": "sudo mkdir -p ./dist/AdvancedOperator/configs & cp -r ./src/configs ./dist/AdvancedOperator/configs", 
     "copyReadme": "cp readme.md ./dist/AdvancedOperator/readme.md", 
     "bundle": "webpack --mode production", 
     "build": "npm run compile && npm run bundle && npm run insertHeader", 
     "prepareDeploy": "npm run copyConfigs & npm run copyReadme & npm run zip", 
     "deploy": "npm run build & npm run prepareDeploy", 
-    "zip": "cd ./dist/AdvancedOperator & rm ../AdvancedOperator.zip & zip -r ../AdvancedOperator.zip .", 
+    "zip": "ls -r & zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator", 
     "insertHeader": "bash ./shellscripts/insertHeader.sh", 
     "lint": "eslint ./src --fix --config .eslintrc.json", 
     "test": "jest ./src --verbose"
