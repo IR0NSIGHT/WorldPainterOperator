@@ -11,7 +11,7 @@
     "build": "sudo mkdir dist & npm run compile && npm run bundle && npm run insertHeader && ls && ls ./dist/ -R", 
     "prepareDeploy": "npm run copyConfigs & npm run copyReadme & npm run zip", 
     "deploy": "npm run build & npm run prepareDeploy", 
-    "zip": "ls -r & zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator", 
+    "zip": "ls -R & sudo zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator", 
     "insertHeader": "bash ./shellscripts/insertHeader.sh", 
     "lint": "eslint ./src --fix --config .eslintrc.json", 
     "test": "jest ./src --verbose"
