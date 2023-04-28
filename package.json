@@ -5,10 +5,10 @@
   "main": "index.js", 
   "scripts": {
     "compile": "tsc -p ./tsconfig.json", 
-    "copyConfigs": "sudo mkdir -p ./dist/AdvancedOperator/configs & cp -r ./src/configs ./dist/AdvancedOperator/configs", 
+    "copyConfigs": "mkdir -p ./dist/AdvancedOperator/configs & cp -r ./src/configs ./dist/AdvancedOperator/configs", 
     "copyReadme": "cp readme.md ./dist/AdvancedOperator/readme.md", 
     "bundle": "webpack --mode production", 
-    "build": "sudo mkdir dist & sudo mkdir compiled & sudo npm run compile & sudo npm run bundle & sudo npm run insertHeader & ls -R", 
+    "build": "sudo mkdir dist & sudo mkdir compiled & sudo npm run compile & sudo npm run bundle & sudo npm run insertHeader & ls", 
     "prepareDeploy": "sudo npm run copyConfigs & sudo npm run copyReadme & sudo npm run zip", 
     "deploy": "npm run build & npm run prepareDeploy", 
     "zip": "ls -R & sudo zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator", 
