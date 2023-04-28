@@ -1,0 +1,19 @@
+name: testPerms
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: test perm shell
+        run: mkdir -p ./hello/world/owo & ls & ls -R hello/
+      - name: test perm npm
+        run: npm run copyConfigs & ls -R dist/
