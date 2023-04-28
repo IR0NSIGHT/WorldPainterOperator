@@ -1,7 +1,9 @@
+import { log } from "../log";
 
 export interface Layer {
   getName(): string;
   getId(): string;
+  getDataSize(): "BIT" | "NIBBLE" | "BYTE" | "BIT_PER_CHUNK" | "NONE";
 }
 
 export function getLayerById(layerId: string): Layer {
@@ -41,9 +43,26 @@ export function getLayerById(layerId: string): Layer {
 
     case "Annotations": // @ts-ignore wp object
       return org.pepsoft.worldpainter.layers.Annotations.INSTANCE;
-    default:
-      throw new TypeError(
-        "unknown/not implemented layer type given: " + layerId
-      );
+
+    default: {
+      //search for custom layers
+      const customLayers: Layer[] = dimension.getCustomLayers();
+      log("got custom layers:" + customLayers.length);
+      let matched: Layer | undefined = undefined;
+      customLayers.forEach(function (element) {
+        log("\t" + element.getName() + " id: " + element.getId());
+        if (layerId == element.getName()) {
+          log("match " + layerId);
+          matched = element;
+        }
+      });
+
+      if (matched == undefined) {
+        throw new TypeError(
+          "unknown/not implemented layer type given: " + layerId
+        );
+      }
+      return matched;
+    }
   }
 }

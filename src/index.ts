@@ -5,7 +5,6 @@ import { log } from "./log";
 const filePath: string = params["file1"];
 
 const opList: GeneralOperation[] = parseJsonFromFile(filePath);
-log("finished parsing operations:");
-opList.forEach(a => log(JSON.stringify(a)));
-log("execute")
+log("finished parsing " + opList.length + " operations:");
+log("execute");
 executeOperations(opList, dimension);

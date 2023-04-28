@@ -8,14 +8,7 @@
             "name": "grass plains", 
 
             (operation type specific values)
-            "terrain": 0,
-        (    "terrain": [0,0,0,4,4,100], )
-            (filter values, all optional)
-            "aboveLevel": -1, 
-            "belowLevel": -1, 
-            "aboveDegrees": -1, 
-            "belowDegrees": -1, 
-            "onlyOnTerrain": -1
+            "terrain": [47]
         }, 
         {
             "terrain": [0,0,0,34,34,5], 
@@ -24,7 +17,7 @@
             "belowDegrees": 50
         }, 
         {
-            "terrain": [36,36,36,36,0,2,30], 
+            "terrain": [36], 
             "name": "beach", 
             "belowDegrees": 30,
             "aboveLevel": 58,
@@ -50,8 +43,14 @@
         }, 
         {
             "layer": ["Pines",7],
-            "terrain" : [2,3,4], (forest floor is mostly dirt and stuff)
+            "terrain" : [0,0,0,2,3,4], (forest floor is mostly dirt and stuff)
             "name": "high ground pines",
+            "perlin": {
+                "seed"     : 42069.0, 
+                "scale"    : 100.0, 
+                "amplitude":   1.0, 
+                "threshold":   0.5  
+            },
             "aboveLevel": 90,
             "belowLevel": 150,
             "belowDegrees": 40  
@@ -61,6 +60,7 @@
         },
         {
             "layer": ["Deciduous", 8], 
+            "terrain" : [0,0,0,100,2,3,4],
             "perlin": {
                 "seed"     : 420.0, 
                 "scale"    : 100.0, 
@@ -71,6 +71,10 @@
             "belowLevel": 90,
             "belowDegrees": 40,
             "name": "middle ground tree"
+        },
+        {
+            "name": "custom layer op",
+            "layer": ["henloWorld", 1]
         }
     
     ]

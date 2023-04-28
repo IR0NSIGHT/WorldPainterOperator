@@ -90,6 +90,10 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       continue;
     }
 
+    layers.forEach((a) => {
+      log("layer " + a.layer.getName() + " datasize: " + a.layer.getDataSize());
+    });
+
     if (layers.length == 0 && terrains.length == 0) {
       log("skip operation with no effect: " + op.name);
       continue;

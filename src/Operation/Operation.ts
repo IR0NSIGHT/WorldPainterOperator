@@ -39,9 +39,25 @@ const applyOperation = (
     dimension.setTerrainAt(x, y, terrainSample);
   }
 
-  op.layer.forEach((a) => {
-    dimension.setLayerValueAt(a.layer, x, y, a.value);
+  op.layer.forEach((layerSetting) => {
+    applyLayerSetting(layerSetting, dimension, x, y);
   });
+};
+
+export const applyLayerSetting = (
+  layer: LayerSetting,
+  dimension: Dimension,
+  x: number,
+  y: number
+): void => {
+  if (
+    layer.layer.getDataSize() == "BIT" ||
+    layer.layer.getDataSize() == "BIT_PER_CHUNK"
+  ) {
+    dimension.setBitLayerValueAt(layer.layer, x, y, layer.value !== 0);
+  } else {
+    dimension.setLayerValueAt(layer.layer, x, y, layer.value);
+  }
 };
 
 export function sample<Type>(arr: Type[]): Type {
