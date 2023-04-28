@@ -23,3 +23,13 @@ jobs:
         run: mkdir compiled & npm run compile
       - name: list compiled
         run: ls -R compiled/
+
+      - name: bundle
+        run: npm run bundle
+      - name: list dist
+        run: ls -R dist/
+
+      - name: full build
+        run: npm run build
+      - name: list dist
+        run: ls -R dist/
