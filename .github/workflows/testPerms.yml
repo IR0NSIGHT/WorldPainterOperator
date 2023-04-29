@@ -39,7 +39,7 @@ jobs:
       - name: full build
         run: npm run build
       - name: post build insert header
-        run: ./shellscripts/insertHeader.sh
+        run: chmod +x ./shellscripts/insertHeader.sh & ls -l ./shellscripts/insertHeader.sh & ./shellscripts/insertHeader.sh
 
       - name: check built file
         run: ls -R dist ;cat dist/AdvancedOperator/AdvancedOperator.js
