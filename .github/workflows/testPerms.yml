@@ -18,7 +18,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-
+      - name: Verify Node.js and NPM installation
+        run: |
+          echo "Node.js version: $(node -v)"
+          echo "NPM version: $(npm -v)"
 
       - name: test perm npm
         run: npm run copyConfigs 
