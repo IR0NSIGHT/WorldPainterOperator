@@ -8,7 +8,7 @@
     "copyConfigs": " mkdir -p ./dist/AdvancedOperator/configs &&  cp -r ./src/configs ./dist/AdvancedOperator/configs", 
     "copyReadme": "cp readme.md ./dist/AdvancedOperator/readme.md", 
     "bundle": "webpack --mode production", 
-    "build": " mkdir dist &&  mkdir compiled && npm run compile && npm run bundle && npm run insertHeader && ls", 
+    "build": "npm run compile && npm run bundle && npm run insertHeader", 
     "prepareDeploy": " npm run copyConfigs &&  npm run copyReadme", 
     "deploy": "npm run build && npm run prepareDeploy", 
     "zip": "ls -R &&  zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator", 
