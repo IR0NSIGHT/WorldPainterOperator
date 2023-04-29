@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: test perm shell
-        run: mkdir -p ./hello/world/owo & ls & ls -R hello/
 
       - name: Install Node.js and NPM
         uses: actions/setup-node@v2
@@ -26,12 +24,11 @@ jobs:
       - name: test perm runner
         run: id; whoami
 
-      - name: list dist
-        run: ls -R dist/
+
       - name: "install"
         run: npm install
       - name: compile
-        run: mkdir compiled & npm run compile
+        run: npm run compile
       - name: list compiled
         run: ls -R compiled/
 
