@@ -21,15 +21,15 @@ jobs:
           echo "Node.js version: $(node -v)"
           echo "NPM version: $(npm -v)"
 
-      - name: test perm runner
+      - name: log runner
         run: id; whoami
 
-      - name: "install"
+      - name: "install dependencies"
         run: npm install
       - name: compile
         run: npm run compile
       - name: list compiled js files
-        run: (   cd ./compiled || exit 1;    find . -name "*.js" -printf "%P\n"; )
+        run: (cd ./compiled || exit 1;    find . -name "*.js" -printf "%P\n";)
 
       - name: bundle
         run: npm run bundle
