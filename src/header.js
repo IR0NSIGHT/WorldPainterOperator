@@ -1,5 +1,5 @@
-// script.description= executre multiple operations in a row based on a config file.//
-// script.param.file1.type=file
-// script.param.file1.description=Path to config
-// script.param.file1.optional=true
-// script.param.file1.default=\AdvancedOperator\Operations\example.json
+// script.description= execute a chain of multiple global operations from a config file.
+// script.param.config.type=file
+// script.param.config.description=Path to config
+// script.param.config.optional=true
+// script.param.config.default=\AdvancedOperator\Operations\example.json
