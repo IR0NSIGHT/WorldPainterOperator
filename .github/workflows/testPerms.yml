@@ -38,5 +38,5 @@ jobs:
 
       - name: full build
         run: npm run build
-      - name: list dist
-        run: ls -R dist/
+      - name: check built file
+        run: ls -R dist ;cat dist/AdvancedOperator/AdvancedOperator.js
