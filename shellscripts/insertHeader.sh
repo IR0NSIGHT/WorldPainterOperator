@@ -4,6 +4,9 @@
 header="src/header.js"
 bundle="dist/AdvancedOperator/AdvancedOperator.js"
 
+# Make the bundle file writable
+chmod +w "$bundle"
+
 # Create a temporary file for the updated bundle
 tmpfile=$(mktemp)
 
