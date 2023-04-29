@@ -39,7 +39,7 @@ jobs:
       - name: full build
         run: npm run build
       - name: post build insert header
-        run: chmod +x ./shellscripts/insertHeader.sh & ls -lR ./shellscripts & ./shellscripts/insertHeader.sh
+        run: chmod +x ./shellscripts/insertHeader.sh && ls -lR ./shellscripts && ./shellscripts/insertHeader.sh
       - name: post build collect readme and configs
         run: npm run prepareDeploy
 
