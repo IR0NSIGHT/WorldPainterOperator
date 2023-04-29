@@ -54,11 +54,11 @@ jobs:
 
         #-------------------------
 
-      - name: Add package version to filename
-        run: echo "::set-output name=VERSION::$(node -p -e "require('./package.json').version")"
+      - name: Get package version, write to .env file
+        run: echo "VERSION=$(node -p -e "require('./package.json').version")" >> "$GITHUB_ENV"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: AdvancedOperator_v${{ steps.version.outputs.version }}
+          name: AdvancedOperator_v${{ env.VERSION }}
           path: dist/AdvancedOperator
