@@ -55,15 +55,10 @@ jobs:
         #-------------------------
 
       - name: Add package version to filename
-        run: echo "::set-env name=VERSION::$(node -p -e "require('./package.json').version")"
-
-      - name: Rename artifact
-        run: |
-          ARTIFACT_NAME="AdvancedOperator_v$VERSION.zip"
-          mv dist/AdvancedOperator.zip "$ARTIFACT_NAME"
+        run: echo "::set-output name=VERSION::$(node -p -e "require('./package.json').version")"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: AdvancedOperator_v${{ steps.version.outputs.version }}
           path: dist/AdvancedOperator
