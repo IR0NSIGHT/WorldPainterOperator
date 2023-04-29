@@ -17,14 +17,14 @@ jobs:
       - name: Install Node.js and NPM
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: "16.x"
       - name: Verify Node.js and NPM installation
         run: |
           echo "Node.js version: $(node -v)"
           echo "NPM version: $(npm -v)"
 
       - name: test perm runner
-        run: id
+        run: id; whoami
 
       - name: list dist
         run: ls -R dist/
