@@ -38,5 +38,8 @@ jobs:
 
       - name: full build
         run: npm run build
+      - name: post build insert header
+        run: ./shellscripts/insertHeader.sh
+
       - name: check built file
         run: ls -R dist ;cat dist/AdvancedOperator/AdvancedOperator.js
