@@ -24,13 +24,12 @@ jobs:
       - name: test perm runner
         run: id; whoami
 
-
       - name: "install"
         run: npm install
       - name: compile
         run: npm run compile
-      - name: list compiled
-        run: ls -R compiled/
+      - name: list compiled js files
+        run: (   cd ./compiled || exit 1;    find . -name "*.js" -printf "%P\n"; )
 
       - name: bundle
         run: npm run bundle
