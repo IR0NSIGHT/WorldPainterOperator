@@ -40,6 +40,14 @@ jobs:
         run: npm run build
       - name: post build insert header
         run: chmod +x ./shellscripts/insertHeader.sh & ls -l ./shellscripts/insertHeader.sh & ./shellscripts/insertHeader.sh
+      - name: post build collect readme and configs
+        run: npm run prepareDeploy
 
       - name: check built file
         run: ls -R dist ;cat dist/AdvancedOperator/AdvancedOperator.js
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: AdvancedOperator
+          path: dist/AdvancedOperator
