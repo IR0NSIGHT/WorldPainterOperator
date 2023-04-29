@@ -23,8 +23,9 @@ jobs:
           echo "Node.js version: $(node -v)"
           echo "NPM version: $(npm -v)"
 
-      - name: test perm npm
-        run: npm run copyConfigs 
+      - name: test perm runner
+        run: id
+
       - name: list dist
         run: ls -R dist/
       - name: "install"
