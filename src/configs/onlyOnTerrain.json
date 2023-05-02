@@ -1,17 +1,14 @@
 {
-    "name": "hello world", 
-    "number": -42069, 
     "operations": [
         {
             "name": "replace grass and clay with dirt", 
             "onlyOnTerrain": [0, 35], 
             "terrain": [2]
-        },
-
+        }, 
         {
             "name": "set frost at rock", 
             "onlyOnTerrain": 29, 
-            "layer": ["Frost",1]
+            "layer": ["Frost", 1]
         }
     ]
 }

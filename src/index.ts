@@ -6,5 +6,5 @@ const filePath: string = params["config"];
 
 const opList: GeneralOperation[] = parseJsonFromFile(filePath);
 log("finished parsing " + opList.length + " operations:");
-log("execute");
+log("execute operations");
 executeOperations(opList, dimension);

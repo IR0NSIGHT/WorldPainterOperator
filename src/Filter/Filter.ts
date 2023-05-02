@@ -74,16 +74,6 @@ export class StandardFilter extends Filter {
   }
 
   private isOnLayer(x: number, y: number, dimension: Dimension): boolean {
-    log(
-      "layers at x" +
-        x +
-        " y=" +
-        y +
-        " = " +
-        JSON.stringify(
-          this.onlyOnBitLayer.some((l) => dimension.getBitLayerValueAt(l, x, y))
-        )
-    );
     return (
       (this.onlyOnScalarLayer.length == 0 && this.onlyOnBitLayer.length == 0) ||
       this.onlyOnScalarLayer.some(
@@ -116,12 +106,6 @@ export class StandardFilter extends Filter {
       isBitLayer(l.getDataSize())
     );
     this.onlyOnTerrain = onlyOnTerrain;
-    log(
-      "create standardfilter only on scalar layers:" +
-        this.onlyOnScalarLayer +
-        " \n bitlayers:" +
-        this.onlyOnBitLayer
-    );
   }
 }
 

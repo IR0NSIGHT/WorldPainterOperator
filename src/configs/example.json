@@ -1,6 +1,4 @@
 {
-    "name": "example operations", 
-    "number": 45, 
     "operations": [
         {
             (mandatory header of each operation)

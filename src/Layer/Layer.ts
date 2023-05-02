@@ -12,12 +12,6 @@ type BitLayer = "BIT" | "BIT_PER_CHUNK";
 export const isBitLayer = (
   layer: ScalarLayer | BitLayer
 ): layer is BitLayer => {
-  log(
-    "test layer for bitty: " +
-      layer +
-      " => " +
-      (layer == "BIT" || layer == "BIT_PER_CHUNK")
-  );
   return layer == "BIT" || layer == "BIT_PER_CHUNK";
 };
 
@@ -85,12 +79,9 @@ export function getLayerById(layerId: string): Layer {
     default: {
       //search for custom layers
       const customLayers: Layer[] = dimension.getCustomLayers();
-      log("got custom layers:" + customLayers.length);
       let matched: Layer | undefined = undefined;
       customLayers.forEach(function (element) {
-        log("\t" + element.getName() + " id: " + element.getId());
         if (layerId == element.getName()) {
-          log("match " + layerId);
           matched = element;
         }
       });

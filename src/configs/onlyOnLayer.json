@@ -1,6 +1,4 @@
 {
-    "name": "hello world", 
-    "number": -42069, 
     "operations": [
         {
             "name": "set dirt at frost", 

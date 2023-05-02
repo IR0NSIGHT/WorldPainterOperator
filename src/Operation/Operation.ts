@@ -69,12 +69,14 @@ export function executeOperations(
   ops: GeneralOperation[],
   dimension: Dimension
 ) {
-  log("exectue all operations:");
   for (const op of ops) {
     log(op.name);
-    for (const f of op.filter) {
-      log("\tFilter: " + f.id);
-    }
+    if (op.filter.length != 0) log("\tFilter\t" + op.filter.map((f) => f.id));
+
+    if (op.terrain.length != 0)
+      log("\tTerrain\t" + op.terrain.map((a) => a.getName()));
+    if (op.layer.length != 0)
+      log("\tLayer\t" + op.layer.map((a) => [a.layer.getName(), a.value]));
   }
 
   const startX: number = dimension.getLowestX() * 128;
@@ -82,6 +84,8 @@ export function executeOperations(
   const endX: number = startX + dimension.getWidth() * 128;
   const endY: number = startY + dimension.getHeight() * 128;
 
+  const notifyerStep = Math.floor((endX - startX) / 5);
+  log("start: " + [startX, startY] + " end: " + [endX, endY]);
   let x,
     y = 0;
   for (x = startX; x < endX; x++) {
@@ -91,5 +95,10 @@ export function executeOperations(
           applyOperation(x, y, op, dimension);
       }
     }
+    if (x % notifyerStep == 0) {
+      log("" + ((x - startX) / (endX - startX)) * 100 + "%");
+    }
   }
+  log("100%");
+  log("done");
 }
