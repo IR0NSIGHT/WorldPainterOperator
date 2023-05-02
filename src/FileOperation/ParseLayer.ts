@@ -1,4 +1,4 @@
-import { Layer } from "../Layer/Layer";
+import { DefaultLayerName, Layer } from "../Layer/Layer";
 import { ParsingError } from "./Parser";
 
 export type ConfigLayer = [string, number];
@@ -20,7 +20,23 @@ export function isValidLayerConfig(json: object) {
   return json === undefined || isConfigLayer(json) || isConfigLayerArray(json);
 }
 
-export const parseLayers = (
+export const parseLayers = (  layer: object,
+  getLayerById: (id: string) => Layer): Layer[] | ParsingError => {
+    if (layer === undefined) {
+      //was not defined in config (its optional)
+      return [];
+    } else if (typeof layer === "string") {
+      //single layer
+      return [getLayerById(layer)];
+    } else if (Array.isArray(layer) && layer.every((l) => typeof l === "string")) {
+      //multiple layers given
+      return (layer as string[]).map(getLayerById);
+    } else {
+      return { mssg: "can not parse layer(s): " + layer };
+    }
+  }
+
+export const parseLayerSetting = (
   layer: object,
   getLayerById: (id: string) => Layer
 ): LayerSetting[] | ParsingError => {

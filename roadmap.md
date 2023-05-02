@@ -16,6 +16,14 @@
 - onlyOnLayer(s)
   list of layers, OR
 
+- onLand
+- onWater
+- onLava (is that not a lava block?)
+- onBiome
+
+- setTerrain and use -1 to skip when chosen:
+  "terrain": [0,-1] => 50% skipped, 50% grass
+- setBiome (is that a layer?)
 - restrict operated area
   from (x,y) to (x,y)
 

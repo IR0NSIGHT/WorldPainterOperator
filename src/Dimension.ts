@@ -11,12 +11,24 @@ export type Dimension = {
     layerValue: number
   ) => void;
 
+  getLayerValueAt: (layer: Layer, x: number, y: number) => number;
+
   setBitLayerValueAt: (
     layer: Layer,
     x: number,
     y: number,
     value: boolean
   ) => void;
+
+  getBitLayerValueAt: (
+    layer: Layer,
+    x: number,
+    y: number,
+  ) => boolean;
+
+  getHeightAt: (x: number, y: number) => number;
+  getSlope: (x: number, y: number) => number;
+  getTerrainAt: (x: number, y: number) => Terrain;
 
   getLowestX: () => number;
   getLowestY: () => number;

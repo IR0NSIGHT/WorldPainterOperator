@@ -7,7 +7,8 @@ type configFilter = {
   belowLevel: number;
   aboveDegrees: number;
   belowDegrees: number;
-  onlyOnTerrain: number;
+  onlyOnTerrain: number[]|number;
+  onlyOnLayer: string[];
   perlin: configPerlin;
 };
 

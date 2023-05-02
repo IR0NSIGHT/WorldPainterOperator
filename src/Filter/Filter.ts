@@ -1,5 +1,7 @@
-import { Layer } from "../Layer/Layer";
+import { Dimension } from "../Dimension";
+import { Layer, isBitLayer } from "../Layer/Layer";
 import { Terrain } from "../Terrain/Terrain";
+import { log } from "../log";
 import { Comparator, FilterInterface } from "./FilterInterface";
 
 export class Filter implements FilterInterface {
@@ -37,12 +39,15 @@ export class StandardFilter extends Filter {
   aboveDegrees: number;
   belowDegrees: number;
   onlyOnTerrain: Terrain[];
+  onlyOnScalarLayer: Layer[];
+  onlyOnBitLayer: Layer[];
 
-  test(x: number, y: number, dimension: any): boolean {
+  test(x: number, y: number, dimension: Dimension): boolean {
     return (
       this.insideLevel(dimension.getHeightAt(x, y)) &&
       this.insideSlope(Math.atan(dimension.getSlope(x, y)) * 57.2957795) && //in grad
-      this.onTerrain(dimension.getTerrainAt(x, y))
+      this.isOnTerrain(dimension.getTerrainAt(x, y)) &&
+      this.isOnLayer(x, y, dimension)
     );
   }
 
@@ -60,10 +65,31 @@ export class StandardFilter extends Filter {
     );
   }
 
-  private onTerrain(terrain: Terrain) {
+  private isOnTerrain(terrain: Terrain) {
     const terrainName = terrain.getName();
     return (
+      this.onlyOnTerrain.length == 0 ||
       this.onlyOnTerrain.some((a) => a.getName() === terrainName)
+    );
+  }
+
+  private isOnLayer(x: number, y: number, dimension: Dimension): boolean {
+    log(
+      "layers at x" +
+        x +
+        " y=" +
+        y +
+        " = " +
+        JSON.stringify(
+          this.onlyOnBitLayer.some((l) => dimension.getBitLayerValueAt(l, x, y))
+        )
+    );
+    return (
+      (this.onlyOnScalarLayer.length == 0 && this.onlyOnBitLayer.length == 0) ||
+      this.onlyOnScalarLayer.some(
+        (l) => dimension.getLayerValueAt(l, x, y) != 0
+      ) ||
+      this.onlyOnBitLayer.some((l) => dimension.getBitLayerValueAt(l, x, y))
     );
   }
 
@@ -73,7 +99,8 @@ export class StandardFilter extends Filter {
     belowLevel: number,
     aboveDegrees: number,
     belowDegrees: number,
-    onlyOnTerrain: Terrain[]
+    onlyOnTerrain: Terrain[],
+    onlyOnLayer: Layer[]
   ) {
     super(id);
     this.id = id;
@@ -82,7 +109,19 @@ export class StandardFilter extends Filter {
     this.aboveDegrees = aboveDegrees; //Math.tan(aboveLevel/57.3)
     this.belowDegrees = belowDegrees; //Math.tan(belowDegrees/57.3)
 
+    this.onlyOnScalarLayer = onlyOnLayer.filter(
+      (l) => !isBitLayer(l.getDataSize())
+    );
+    this.onlyOnBitLayer = onlyOnLayer.filter((l) =>
+      isBitLayer(l.getDataSize())
+    );
     this.onlyOnTerrain = onlyOnTerrain;
+    log(
+      "create standardfilter only on scalar layers:" +
+        this.onlyOnScalarLayer +
+        " \n bitlayers:" +
+        this.onlyOnBitLayer
+    );
   }
 }
 
