@@ -76,8 +76,9 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
     const layers = parseLayers(op.layer, getLayerById);
     const terrains = parseTerrains(op.terrain, getTerrainById);
     const perlin = parsePerlin(op.perlin);
+    const onlyOnTerrains = parseTerrains(op.onlyOnTerrain, getTerrainById);
 
-    [layers, terrains, perlin].forEach((a) => {
+    [layers, terrains, perlin, onlyOnTerrains].forEach((a) => {
       if (isParsingError(a)) {
         logError(a.mssg);
       }
@@ -85,14 +86,11 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
     if (
       isParsingError(layers) ||
       isParsingError(terrains) ||
-      isParsingError(perlin)
+      isParsingError(perlin) ||
+      isParsingError(onlyOnTerrains)
     ) {
       continue;
     }
-
-    layers.forEach((a) => {
-      log("layer " + a.layer.getName() + " datasize: " + a.layer.getDataSize());
-    });
 
     if (layers.length == 0 && terrains.length == 0) {
       log("skip operation with no effect: " + op.name);
@@ -105,7 +103,7 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       safeParseNumber(op.belowLevel),
       safeParseNumber(op.aboveDegrees),
       safeParseNumber(op.belowDegrees),
-      getTerrainById(safeParseNumber(op.onlyOnTerrain))
+      onlyOnTerrains
     );
 
     const opFilters = [basicFilter];

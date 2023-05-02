@@ -36,7 +36,7 @@ export class StandardFilter extends Filter {
   belowLevel: number;
   aboveDegrees: number;
   belowDegrees: number;
-  onlyOnTerrain: Terrain | null;
+  onlyOnTerrain: Terrain[];
 
   test(x: number, y: number, dimension: any): boolean {
     return (
@@ -61,9 +61,9 @@ export class StandardFilter extends Filter {
   }
 
   private onTerrain(terrain: Terrain) {
+    const terrainName = terrain.getName();
     return (
-      this.onlyOnTerrain == null ||
-      this.onlyOnTerrain.getName() == terrain.getName()
+      this.onlyOnTerrain.some((a) => a.getName() === terrainName)
     );
   }
 
@@ -73,7 +73,7 @@ export class StandardFilter extends Filter {
     belowLevel: number,
     aboveDegrees: number,
     belowDegrees: number,
-    onlyOnTerrain: Terrain | null
+    onlyOnTerrain: Terrain[]
   ) {
     super(id);
     this.id = id;
