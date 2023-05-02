@@ -10,7 +10,7 @@ export class PerlinFilter extends Filter {
   amplitude: number;
 
   test(x: number, y: number, _dimension: Dimension): boolean {
-    const pass = this.getValueAt(x, y) > this.threshold;
+    const pass = this.getValueAt(x, y) < this.threshold;
     return pass;
   }
 

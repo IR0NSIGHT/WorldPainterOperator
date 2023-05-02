@@ -1,0 +1,15 @@
+{
+    "operations": [
+        {
+            "name": "high ground pines with forest floor", 
+            "layer": ["Pines", 7], 
+            "terrain": [0, 0, 0, 2, 3, 4], 
+            "aboveLevel": 90, 
+            "belowLevel": 150, 
+            "aboveDegrees": 30, 
+            "belowDegrees": 60, 
+            "onlyOnTerrain": 0, 
+            "onlyOnLayer": "Frost"
+        }
+    ]
+}
