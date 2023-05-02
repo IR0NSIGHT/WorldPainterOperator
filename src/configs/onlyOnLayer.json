@@ -1,0 +1,16 @@
+{
+    "name": "hello world", 
+    "number": -42069, 
+    "operations": [
+        {
+            "name": "set dirt at frost", 
+            "onlyOnLayer": "Frost", 
+            "terrain": [2]
+        }, 
+        {
+            "name": "set pines at frost and annotations", 
+            "onlyOnLayer": ["Annotations", "Frost"], 
+            "layer": ["Pines", 7]
+        }
+    ]
+}

@@ -3,7 +3,7 @@ import { GeneralOperation } from "../Operation/Operation";
 import { Terrain, getTerrainById } from "../Terrain/Terrain";
 import { log, logError } from "../log";
 import { configOperation } from "./ConfigOperation";
-import { parseLayers } from "./ParseLayer";
+import { parseLayerSetting, parseLayers } from "./ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
 import { parsePerlin, safeParseNumber } from "./ParseFilter";
 import { StandardFilter } from "../Filter/Filter";
@@ -73,12 +73,14 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
 
   let op: configOperation;
   for (op of configOperations) {
-    const layers = parseLayers(op.layer, getLayerById);
+    const layers = parseLayerSetting(op.layer, getLayerById);
     const terrains = parseTerrains(op.terrain, getTerrainById);
     const perlin = parsePerlin(op.perlin);
     const onlyOnTerrains = parseTerrains(op.onlyOnTerrain, getTerrainById);
+    const onlyOnLayer = parseLayers(op.onlyOnLayer, getLayerById);
 
-    [layers, terrains, perlin, onlyOnTerrains].forEach((a) => {
+    log("parsed onlyOnLayer: " + onlyOnLayer);
+    [layers, terrains, perlin, onlyOnTerrains, onlyOnLayer].forEach((a) => {
       if (isParsingError(a)) {
         logError(a.mssg);
       }
@@ -87,7 +89,8 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       isParsingError(layers) ||
       isParsingError(terrains) ||
       isParsingError(perlin) ||
-      isParsingError(onlyOnTerrains)
+      isParsingError(onlyOnTerrains) ||
+      isParsingError(onlyOnLayer)
     ) {
       continue;
     }
@@ -103,7 +106,8 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       safeParseNumber(op.belowLevel),
       safeParseNumber(op.aboveDegrees),
       safeParseNumber(op.belowDegrees),
-      onlyOnTerrains
+      onlyOnTerrains,
+      onlyOnLayer
     );
 
     const opFilters = [basicFilter];

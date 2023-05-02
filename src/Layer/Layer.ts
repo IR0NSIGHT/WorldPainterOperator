@@ -1,10 +1,48 @@
 import { log } from "../log";
 
 export interface Layer {
-  getName(): string;
+  getName(): DefaultLayerName;
   getId(): string;
-  getDataSize(): "BIT" | "NIBBLE" | "BYTE" | "BIT_PER_CHUNK" | "NONE";
+  getDataSize(): ScalarLayer | BitLayer;
 }
+
+type ScalarLayer = "NIBBLE" | "BYTE" | "NONE";
+type BitLayer = "BIT" | "BIT_PER_CHUNK";
+
+export const isBitLayer = (
+  layer: ScalarLayer | BitLayer
+): layer is BitLayer => {
+  log(
+    "test layer for bitty: " +
+      layer +
+      " => " +
+      (layer == "BIT" || layer == "BIT_PER_CHUNK")
+  );
+  return layer == "BIT" || layer == "BIT_PER_CHUNK";
+};
+
+const DefaultLayerNames = [
+  "Frost",
+  "Caves",
+  "Caverns",
+  "Chasms",
+  "Deciduous",
+  "Pines",
+  "Swamp",
+  "Jungle",
+  "Resources",
+  "ReadOnly",
+  "Annotations",
+] as const;
+
+export type DefaultLayerName = (typeof DefaultLayerNames)[number];
+
+export const isDefaultLayerName = (name: unknown): name is DefaultLayerName => {
+  return (
+    typeof name === "string" &&
+    DefaultLayerNames.includes(name as DefaultLayerName)
+  );
+};
 
 export function getLayerById(layerId: string): Layer {
   switch (layerId) {
