@@ -22,3 +22,7 @@ export type layerConfigOperation = {
   layerType: string;
   layerValue: number;
 } & configOperation;
+
+export const isValidConfigOperationBody = ( op: any): boolean => {
+  return ('name' in op && op.name != undefined && typeof op.name == "string")
+}

@@ -72,7 +72,7 @@
         },
         {
             "name": "custom layer op",
-            "layer": ["henloWorld", 1]
+            "layer": [["henloWorld", 1],["owoBoi", 1]]
         }
     
     ]
