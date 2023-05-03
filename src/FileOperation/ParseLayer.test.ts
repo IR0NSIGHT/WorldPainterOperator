@@ -1,5 +1,5 @@
-import { Layer } from "../Layer/Layer";
-import { ConfigLayer, LayerSetting, parseLayers } from "./ParseLayer";
+import { DefaultLayerName, Layer } from "../Layer/Layer";
+import { ConfigLayer, parseLayerSetting, parseLayers } from "./ParseLayer";
 import { isParsingError } from "./Parser";
 
 describe("parse layers from config", () => {
@@ -9,7 +9,10 @@ describe("parse layers from config", () => {
     const getLayerById = (id: string): Layer => {
       return {
         getName() {
-          return "name_" + id;
+          return ("name_" + id) as DefaultLayerName;
+        },
+        getDataSize() {
+          return "BIT";
         },
         getId() {
           return id;
@@ -17,13 +20,14 @@ describe("parse layers from config", () => {
       };
     };
     expect(Array.isArray(data)).toBeFalsy;
-    const parsed = parseLayers(data, getLayerById);
+    const parsed = parseLayerSetting(data, getLayerById);
 
     expect(parsed).toHaveLength(1);
     expect(isParsingError(parsed)).toBeFalsy();
-    expect((parsed as LayerSetting[])[0].layer.getId()).toBe("Frost");
-    expect((parsed as LayerSetting[])[0].layer.getName()).toBe("name_Frost");
-    expect((parsed as LayerSetting[])[0].value).toBe(1);
+    if (isParsingError(parsed)) return;
+    expect(parsed[0].layer.getId()).toBe("Frost");
+    expect(parsed[0].layer.getName()).toBe("name_Frost");
+    expect(parsed[0].value).toBe(1);
   });
 
   test("parse multiple layers", () => {
@@ -36,7 +40,10 @@ describe("parse layers from config", () => {
     const getLayerById = (id: string): Layer => {
       return {
         getName() {
-          return id;
+          return id as DefaultLayerName;
+        },
+        getDataSize() {
+          return "BIT";
         },
         getId() {
           return id;
@@ -44,8 +51,8 @@ describe("parse layers from config", () => {
       };
     };
     expect(Array.isArray(data)).toBeFalsy;
-    const parsed = parseLayers(data, getLayerById);
-
+    const parsed = parseLayerSetting(data, getLayerById);
+    expect(isParsingError(parsed)).toBeFalsy();
     expect(parsed).toHaveLength(3);
   });
 
@@ -55,7 +62,10 @@ describe("parse layers from config", () => {
     const getLayerById = (id: string): Layer => {
       return {
         getName() {
-          return id;
+          return id as DefaultLayerName;
+        },
+        getDataSize() {
+          return "BIT";
         },
         getId() {
           return id;
@@ -75,7 +85,10 @@ describe("parse layers from config", () => {
     const getLayerById = (id: string): Layer => {
       return {
         getName() {
-          return id;
+          return id as DefaultLayerName;
+        },
+        getDataSize() {
+          return "BIT";
         },
         getId() {
           return id;
