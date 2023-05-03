@@ -14,22 +14,16 @@
     "insertHeader": "bash ./shellscripts/insertHeader.sh",
     "lint": "eslint ./src --fix --config .eslintrc.json",
     "test": "jest ./src --verbose"
-  },
+  }, 
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/IR0NSIGHT/WorldPainterOperator.git"
-  },
-  "keywords": [
-    "WorldPainter",
-    "Operator",
-    "minecraft"
-  ],
-  "author": "IR0NSIGHT",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/IR0NSIGHT/WorldPainterOperator/issues"
-  },
-  "homepage": "https://github.com/IR0NSIGHT/WorldPainterOperator#readme",
+    "type": "git"                                                      , 
+    "url" : "git+https://github.com/IR0NSIGHT/WorldPainterOperator.git"  
+  }, 
+  "keywords": ["WorldPainter", "Operator", "minecraft"], 
+  "author": "IR0NSIGHT", 
+  "license": "MIT", 
+  "bugs": {"url": "https://github.com/IR0NSIGHT/WorldPainterOperator/issues"}, 
+  "homepage": "https://github.com/IR0NSIGHT/WorldPainterOperator#readme", 
   "devDependencies": {
     "@types/jest": "^29.5.1",
     "@types/node": "^18.16.0",
