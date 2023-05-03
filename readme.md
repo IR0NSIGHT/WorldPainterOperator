@@ -17,6 +17,24 @@ hit run
 in the configs folder you will find some example configs.
 the config must obey the JSON format, with the exception that comments are allowed in the form of (a comment)
 comments can span multiple lines.
+
+### Basic structure of config
+
+all configs have the same basic structure:
+
+```json
+{
+  "operations": [
+    //operations will go here, separated by comma
+  ]
+}
+```
+
+find a most simple, working config in configs/examples/myFirstOperation.json
+check out the other configs too, to see whats possible and how everything works.
+### Basic structure of operations
+
+Operations follow a basic layout too.
 in its most basic form an operation has a name, and (optional) some actions:
 
 ```json
@@ -34,31 +52,54 @@ in its most basic form an operation has a name, and (optional) some actions:
 }
 ```
 
-you can use `"terrain": 42` to set the terrain with id: 42.
-if you give a list of terrain: `"terrain": [42, 0, 0, 57]`, for each block the used terrain is randomly chosen from the terrain ID list.
-This means that `"terrain": [0,1]` will randomly sprinkle grass(id=0) (50%) and dirt(id=1)(50%) blocks.
+multiple operations can be run from the same config:
 
+```json
+{
+  "operations": [
+    { "name": "First operation, make all grass", "terrain": 0 },
+    { "name": "Second operation, make all pines", "layer": ["Pines", 7] }
+  ]
+}
+```
+
+we will skip the "{ "operations": [...]}" wrapper from now, as it is always the same.
+
+### Setting Terrain
+
+If you want to set terrain in an operation, add `"terrain": 0` to your operation.
+This will set the terrain to id=0, which means grass.
 A list of block-ids for worldpainter can be found here: https://www.worldpainter.net/trac/wiki/Scripting/TerrainTypeValues
+Note that the IDs are worldpainter specific, not minecraft specific.
 
-It works similar for setting layers, with one exception.
+you can use `"terrain": 42` to set the terrain with id: 42.
+if you give a list of terrain: `"terrain": [42, 0, 0, 57]`, for each block the used terrain is randomly chosen from the terrain ID list (with an equal chance for all ids).
+This means that `"terrain": [0,1]` will randomly sprinkle grass(id=0) (50%) and dirt(id=1)(50%) blocks.
+`"terrain": [0,0,0,1]` will have on average 3 grass for 1 dirt.
+
+### Setting Layers
+
+Worldpainter layers can also be set with the config.
+It works very similar to setting terrain, with some exceptions.
 `"layer": ["Frost",1]` will set the frost layer to 1 ("ON"). `"layer": ["Pines", 7]` will set the pines layer to 7 (on a scale 0 to 15).
-If you input a list of layers to set: `"layer": [["Frost",1],  ["Pines", 7]]`, all of them will be applied.
+If you input a list of layers to set: `"layer": [["Frost",1],  ["Pines", 7]]`, _all_ of them will be applied.
 Note that layers come in two forms: BIT layers and scalar layers.
 
 ### Bit Layers:
 
-Frost, Void
-Bit Layers are on or off.
+Frost and Void are Bit Layers: on or off.
 Setting Frost to 15 will have the same effect as "[Frost, 1]".
+use ["Frost", 0] to remove frost (or any layer)
 
 ### Scalar Layers:
 
 Pine, Deciduous, Caves, Caverns, Chasms, Swamp, Jungle, Resources, ReadOnly, Annotations, Custom Layers
+
 For some of these layers, 0..15 means the strength of the layer. pines = 9 means dense pine forest, pines=4 means light pine forest.
-For other layers, the number is an id, like annotations:
+For other layers, the number is an id: ["Annotations": 1] translates to "Annotations with Color white":
 https://www.worldpainter.net/trac/wiki/Scripting/AnnotationColours
 
-you can also use custom layers (Ground Cover etc.) by referencing them by name. "My Custom GroundCover" f.e. (avoid spaces)
+you can also use custom layers (Ground Cover etc.) by referencing them by name. "My Custom GroundCover" f.e. (avoid spaces). Note that you should always use unique names for your custom layers, for it to work.
 
 ## Filters
 

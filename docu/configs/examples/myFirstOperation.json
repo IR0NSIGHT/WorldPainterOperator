@@ -1,0 +1,6 @@
+{
+    "operations": [
+        { "name": "Hello World, make all grass", "terrain": 0},
+        { "name": "another operation, make all pines", "layer": ["Pines",7]}
+    ]
+}
