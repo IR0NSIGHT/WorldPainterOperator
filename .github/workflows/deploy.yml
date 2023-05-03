@@ -24,20 +24,11 @@ jobs:
 
       - name: "install dependencies"
         run: npm install
-      - name: compile
-        run: npm run compile
-      - name: list compiled js files
-        run: (cd ./compiled || exit 1;    find . -name "*.js" -printf "%P\n";)
-
-      - name: bundle
-        run: npm run bundle
-      - name: list dist
-        run: ls -R dist/
 
       - name: full build and deploy
         run: npm run deploy
 
-      - name: check built file
+      - name: debug - check built file
         run: ls -R dist ;cat dist/AdvancedOperator/AdvancedOperator.js
 
       - name: Get package version, write to .env file
