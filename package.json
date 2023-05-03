@@ -5,7 +5,7 @@
   "main": "dist/AdvancedOperator/AdvancedOperator.js", 
   "scripts": {
     "compile": "tsc -p ./tsconfig.json", 
-    "copyDocu": "npm run create-directory && cp -r ./docu/* ./dist/AdvancedOperator", 
+    "copyDocu": "npm run create-directory && cp -r ./docu/* ./dist/AdvancedOperator && cp readme.md dist/AdvancedOperator/readme.txt && cp readme.md dist/AdvancedOperator/readme.md", 
     "create-directory": "node -e \"const mkdirp = require('mkdirp'); mkdirp.sync('./dist/AdvancedOperator/configs');\"", 
     "bundle": "webpack --mode production", 
     "build": "npm run compile && npm run bundle && npm run insertHeader", 
