@@ -2,19 +2,21 @@ import { getLayerById } from "../Layer/Layer";
 import { GeneralOperation } from "../Operation/Operation";
 import { Terrain, getTerrainById } from "../Terrain/Terrain";
 import { log, logError } from "../log";
-import { configOperation } from "./ConfigOperation";
+import { configOperation, isValidConfigOperationBody } from "./ConfigOperation";
 import { parseLayerSetting, parseLayers } from "./ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
 import { parsePerlin, safeParseNumber } from "./ParseFilter";
 import { StandardFilter } from "../Filter/Filter";
 import { PerlinFilter } from "../Filter/PerlinFilter";
 
-export type ParsingError = { mssg: string };
+export type ParsingError = { mssg: string | string[] };
 export function isParsingError(error: any): error is ParsingError {
   return (
     typeof error === "object" &&
     error.mssg != undefined &&
-    typeof error.mssg === "string"
+    (typeof error.mssg === "string" ||
+      (Array.isArray(error.mssg) &&
+        error.mssg.every((a: any) => typeof a == "string")))
   );
 }
 export const parseTerrains = (
@@ -51,28 +53,48 @@ function loadConfig(filePath: string): config | ParsingError {
     const out: any = JSON.parse(jsonString);
     return out;
   } catch (e) {
-    return { mssg: "could not parse config from json" };
+    return {
+      mssg: "could not parse JSON object from config file, please check JSON syntax",
+    };
   }
 }
 
-export function parseJsonFromFile(filePath: string): GeneralOperation[] {
+export function parseJsonFromFile(
+  filePath: string
+): GeneralOperation[] | ParsingError {
   const allOperations: GeneralOperation[] = [];
-  let id = 0;
-  const nextFilterId = () => {
-    id++;
-    return id;
-  };
 
   const loadedConfig = loadConfig(filePath);
   if (isParsingError(loadedConfig)) {
-    logError(loadedConfig.mssg);
+    logError(loadedConfig);
     return [];
   }
+  log("config has valid JSON format.");
 
+  const hasOpKey = loadedConfig.operations != undefined;
+  const isArr = Array.isArray(loadedConfig.operations);
+  const hasConfigBody = hasOpKey && isArr;
+  if (!hasConfigBody) {
+    return {
+      mssg: "Config is missing/has wrong config body: \n{ 'operations': [ ...my operations... ] }",
+    };
+  }
+  log("config has valid body");
+
+  if (!loadedConfig.operations.every(isValidConfigOperationBody)) {
+    const invalidOps = loadedConfig.operations
+      .filter((a) => !isValidConfigOperationBody(a))
+      .map((a) => "op_name: " + a.name + "\n op_string:" + JSON.stringify(a));
+
+    return {
+      mssg: "some operations have invalid bodies: " + invalidOps,
+    };
+  }
   const configOperations: configOperation[] = loadedConfig.operations;
 
   let op: configOperation;
   for (op of configOperations) {
+    log("parse operation: " + op.name);
     const layers = parseLayerSetting(op.layer, getLayerById);
     const terrains = parseTerrains(op.terrain, getTerrainById);
     const perlin = parsePerlin(op.perlin);
@@ -82,7 +104,7 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
     //print all parsing errors
     [layers, terrains, perlin, onlyOnTerrains, onlyOnLayer].forEach((a) => {
       if (isParsingError(a)) {
-        logError(a.mssg);
+        logError(a);
       }
     });
 
@@ -94,6 +116,7 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       isParsingError(onlyOnTerrains) ||
       isParsingError(onlyOnLayer)
     ) {
+      log("skip faulty operation:" + op.name);
       continue;
     }
 
@@ -129,6 +152,9 @@ export function parseJsonFromFile(filePath: string): GeneralOperation[] {
       filter: opFilters,
     };
     allOperations.push(operation);
+  }
+  if (allOperations.length == 0) {
+    return { mssg: "Abort because no valid operations were read." };
   }
   return allOperations;
 }

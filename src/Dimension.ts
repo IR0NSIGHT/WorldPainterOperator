@@ -2,6 +2,8 @@ import { Layer } from "./Layer/Layer";
 import { Terrain } from "./Terrain/Terrain";
 
 export type Dimension = {
+  getCustomLayers: () => Layer[];
+
   setTerrainAt: (x: number, y: number, terrain: Terrain) => void;
 
   setLayerValueAt: (
@@ -20,11 +22,7 @@ export type Dimension = {
     value: boolean
   ) => void;
 
-  getBitLayerValueAt: (
-    layer: Layer,
-    x: number,
-    y: number,
-  ) => boolean;
+  getBitLayerValueAt: (layer: Layer, x: number, y: number) => boolean;
 
   getHeightAt: (x: number, y: number) => number;
   getSlope: (x: number, y: number) => number;

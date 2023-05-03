@@ -1,5 +1,5 @@
-import { DefaultLayerName, Layer } from "../Layer/Layer";
-import { ParsingError } from "./Parser";
+import { Layer } from "../Layer/Layer";
+import { ParsingError, isParsingError } from "./Parser";
 
 export type ConfigLayer = [string, number];
 export type LayerSetting = { layer: Layer; value: number };
@@ -20,39 +20,69 @@ export function isValidLayerConfig(json: object) {
   return json === undefined || isConfigLayer(json) || isConfigLayerArray(json);
 }
 
-export const parseLayers = (  layer: object,
-  getLayerById: (id: string) => Layer): Layer[] | ParsingError => {
-    if (layer === undefined) {
-      //was not defined in config (its optional)
-      return [];
-    } else if (typeof layer === "string") {
-      //single layer
-      return [getLayerById(layer)];
-    } else if (Array.isArray(layer) && layer.every((l) => typeof l === "string")) {
-      //multiple layers given
-      return (layer as string[]).map(getLayerById);
-    } else {
-      return { mssg: "can not parse layer(s): " + layer };
-    }
+/**
+ * will turn an unknown obj into an array of objs of type or a parsing error.
+ * @param obj: can be undefined, one element or array of elements (or invalid)
+ * @param isValidSingleObject test if input is a valid single object of desired type
+ * @returns
+ */
+function toTypedArray<Type>(
+  obj: object,
+  isValidSingleObject: (obj: object) => boolean
+): Type[] | ParsingError {
+  let typedArray: Type[] = [];
+  if (obj === undefined) {
+    //allowed bc its optional
+    typedArray = [];
+  } else if (isValidSingleObject(obj)) {
+    //single layer
+    typedArray = [obj] as Type[];
+  } else if (Array.isArray(obj) && obj.every(isValidSingleObject)) {
+    //multiple layers given
+    typedArray = obj;
+  } else {
+    return { mssg: "could not turn obj into typed array: " + obj };
   }
+  return typedArray;
+}
+
+export const parseLayers = (
+  layer: object,
+  getLayerById: (id: string) => Layer | ParsingError
+): Layer[] | ParsingError => {
+  const layerIds = toTypedArray<string>(layer, (l) => typeof l === "string");
+  if (isParsingError(layerIds)) {
+    return { mssg: "can not parse layer(s): " + layer };
+  }
+  const parsedLayers = layerIds.map(getLayerById);
+  if (parsedLayers.some(isParsingError)) {
+    return {
+      mssg: parsedLayers.filter(isParsingError).map(a => a.mssg.toString()),
+    };
+  }
+  return parsedLayers as Layer[];
+};
 
 export const parseLayerSetting = (
   layer: object,
-  getLayerById: (id: string) => Layer
+  getLayerById: (id: string) => Layer | ParsingError
 ): LayerSetting[] | ParsingError => {
-  if (layer === undefined) {
-    //was not defined in config (its optional)
-    return [];
-  } else if (isConfigLayer(layer)) {
-    //single layer
-    return [{ layer: getLayerById(layer[0]), value: layer[1] }];
-  } else if (isConfigLayerArray(layer)) {
-    //multiple layers given
-    return (layer as ConfigLayer[]).map((l) => ({
-      layer: getLayerById(l[0]),
-      value: l[1],
-    }));
-  } else {
+  const configLayers = toTypedArray<ConfigLayer>(layer, isConfigLayer);
+  if (isParsingError(configLayers)) {
     return { mssg: "can not parse layer(s): " + layer };
   }
+
+  const parsedLayers = configLayers.map((l) => ({
+    layer: getLayerById(l[0]),
+    value: l[1],
+  }));
+  if (parsedLayers.some((a) => isParsingError(a.layer))) {
+    return {
+      mssg:
+        parsedLayers
+          .filter((a) => isParsingError(a.layer))
+          .map((a) => (a.layer as ParsingError).mssg.toString()),
+    };
+  }
+  return parsedLayers as LayerSetting[];
 };

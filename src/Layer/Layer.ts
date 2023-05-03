@@ -1,3 +1,5 @@
+import { Dimension } from "../Dimension";
+import { ParsingError } from "../FileOperation/Parser";
 import { log } from "../log";
 
 export interface Layer {
@@ -38,7 +40,17 @@ export const isDefaultLayerName = (name: unknown): name is DefaultLayerName => {
   );
 };
 
-export function getLayerById(layerId: string): Layer {
+export const isExistingCustomLayer = (
+  customLayerName: string,
+  dimension: Dimension
+): boolean => {
+  const customLayerNames: string[] = dimension
+    .getCustomLayers()
+    .map((a) => a.getName());
+  return customLayerNames.some((a) => a == customLayerName);
+};
+
+export function getLayerById(layerId: string): Layer | ParsingError {
   switch (layerId) {
     case "Frost": // @ts-ignore wp object
       return org.pepsoft.worldpainter.layers.Frost.INSTANCE;
@@ -87,9 +99,7 @@ export function getLayerById(layerId: string): Layer {
       });
 
       if (matched == undefined) {
-        throw new TypeError(
-          "unknown/not implemented layer type given: " + layerId
-        );
+        return { mssg: "could not find custom layer with name: " + layerId };
       }
       return matched;
     }
