@@ -38,4 +38,4 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: AdvancedOperator.zip
+          files: AdvancedOperator_v${{ env.VERSION }}.zip
