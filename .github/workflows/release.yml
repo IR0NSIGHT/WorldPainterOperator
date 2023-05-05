@@ -32,8 +32,8 @@ jobs:
       - name: Log version in js file
         run: echo "//script.name=AdvancedOperator v${{ env.VERSION }} by IR0NSIGHT" | cat - dist/AdvancedOperator/AdvancedOperator.js > temp && mv temp dist/AdvancedOperator/AdvancedOperator.js
 
-      - name: Zip artiface
-        run: zip AdvancedOperator.zip dist/AdvancedOperator
+      - name: Zip artifact
+        run: zip -r AdvancedOperator_v${{ env.VERSION }}.zip dist/AdvancedOperator
 
       - name: Release
         uses: softprops/action-gh-release@v1
