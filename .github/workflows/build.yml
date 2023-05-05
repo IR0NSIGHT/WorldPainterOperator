@@ -1,4 +1,4 @@
-name: deploy
+name: Build artifact
 
 on: push
 
@@ -6,30 +6,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Install Node.js and NPM
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
-
-      - name: Verify Node.js and NPM installation
-        run: |
-          echo "Node.js version: $(node -v)"
-          echo "NPM version: $(npm -v)"
-
-      - name: log runner
-        run: id; whoami
+          node-version: "latest"
 
       - name: "install dependencies"
-        run: npm install
+        run: npm ci
 
       - name: full build and deploy
         run: npm run deploy
-
-      - name: debug - check built file
-        run: ls -R dist ;cat dist/AdvancedOperator/AdvancedOperator.js
 
       - name: Get package version, write to .env file
         run: echo "VERSION=$(node -p -e "require('./package.json').version")" >> "$GITHUB_ENV"
