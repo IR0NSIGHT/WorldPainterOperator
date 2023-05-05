@@ -1,0 +1,54 @@
+{
+    "operations": [
+        {
+            "name": "remove crap", 
+            "terrain": 2, 
+            "layer": [ ["Deciduous", 0], ["Frost", 0], ["Pines", 0] ]
+        }, 
+        {
+            "name": "flat ice desert", 
+            "layer": ["Frost", 1], 
+            "terrain": [40], 
+            "aboveLevel": 70, 
+            "belowLevel": 90, 
+            "belowDegrees": 40
+        }, 
+        {
+            "name": "flat shore", 
+            "belowLevel": 70, 
+            "belowDegrees": 40, 
+            "terrain": 29
+        }, 
+        {
+            "name": "steep shore", 
+            "belowLevel": 70, 
+            "aboveDegrees": 40, 
+            "terrain": 72
+        }, 
+        {
+            "layer": [ ["Pines", 8], ["Frost", 0] ], 
+            "terrain": [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 100, 158], 
+            "perlin": {
+                "seed"     : 420.0, 
+                "scale"    : 100.0, 
+                "amplitude":   1.0, 
+                "threshold":   0.5  
+            }, 
+            "aboveLevel": 70, 
+            "belowDegrees": 40, 
+            "name": "flat iced forest"
+        }, 
+        {"name": "rocky cliffs", "terrain": 31, "aboveDegrees": 30}, 
+        {
+            "name": "frost perlin on water", 
+            "belowLevel": 64, 
+            "layer": ["Frost", 1], 
+            "perlin": {
+                "seed"     : 421.0, 
+                "scale"    :  30.0, 
+                "amplitude":   1.0, 
+                "threshold":   0.6  
+            }
+        }
+    ]
+}
