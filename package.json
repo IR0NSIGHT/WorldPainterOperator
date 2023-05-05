@@ -1,6 +1,6 @@
 {
   "name": "worldpainteroperator",
-  "version": "1.0.8",
+  "version": "1.0.13",
   "description": "run chains of complex, global operations in WorldPainter from a config file.",
   "main": "dist/AdvancedOperator/AdvancedOperator.js",
   "scripts": {
