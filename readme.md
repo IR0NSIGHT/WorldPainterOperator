@@ -1,9 +1,25 @@
 # AdvancedOperator
 
 github: https://github.com/IR0NSIGHT/WorldPainterOperator
+latest release/download link: https://github.com/IR0NSIGHT/WorldPainterOperator/actions/workflows/deploy.yml?query=branch%3Amaster+workflow%3Adeploy
+
 The AdvancedOperator provides a way to run global operations in WorldPainter using
 config files.
 It supports more detailed filters than WorldPainter does, for example allowing above and below slope filters at the same time, perlin noise operators, choosing randomly from a list of terrains to set, ...
+
+## What does it do
+
+> Automate your terrain painting. Dont run 15 global operations by hand, save them in a config and apply with one click!
+
+These 3 Worlds are painted with (almost) the same config, where i switched out some terrains and layers.
+It took ~10 minutes to figure out nice values and paint all of them.
+Since the config are saved, i can apply it to any world/heightmap/savefile now.
+|               Green               |               Continental               |           Mesa            |
+| :-------------------------------: | :-------------------------------------: | :-----------------------: |
+| ![Green](imgs/3d_icy.png) | ![Continental](imgs/3d_continental.png) | ![Mesa](imgs/3d_mesa.png) |
+| ![Green](imgs/terrain_icy.png) | ![Continental](imgs/terrain_continental.png) | ![Mesa](imgs/terrain_mesa.png) |
+
+
 
 ## Running the script
 
@@ -32,6 +48,7 @@ all configs have the same basic structure:
 
 find a most simple, working config in configs/examples/myFirstOperation.json
 check out the other configs too, to see whats possible and how everything works.
+
 ### Basic structure of operations
 
 Operations follow a basic layout too.
