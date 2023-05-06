@@ -1,6 +1,6 @@
 # AdvancedOperator
 
-github: https://github.com/IR0NSIGHT/WorldPainterOperator
+github: https://github.com/IR0NSIGHT/WorldPainterOperator  
 latest release/download link: https://github.com/IR0NSIGHT/WorldPainterOperator/actions/workflows/deploy.yml?query=branch%3Amaster+workflow%3Adeploy
 
 The AdvancedOperator provides a way to run global operations in WorldPainter using
