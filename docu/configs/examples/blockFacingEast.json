@@ -1,0 +1,15 @@
+{
+    "operations": [
+        { "name": "clear annotations", "layer": ["Annotations", 0] }, 
+        {
+            "name": "mark all east facing with annotations white", 
+            "facing": "E", 
+            "layer": ["Annotations", 1]
+        }, 
+        {
+            "name": "mark all north west facing with annotations orange", 
+            "facing": ["N", "w"], 
+            "layer": ["Annotations", 2]
+        }
+    ]
+}

@@ -10,6 +10,7 @@ type configFilter = {
   onlyOnTerrain: number[]|number;
   onlyOnLayer: string[];
   perlin: configPerlin;
+  facing: string[]|string;
 };
 
 export type terrainConfigOperation = {

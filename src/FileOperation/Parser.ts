@@ -8,6 +8,8 @@ import { FilterInterface } from "../Filter/FilterInterface";
 import { parsePerlin, safeParseNumber } from "./ParseFilter";
 import { StandardFilter } from "../Filter/Filter";
 import { PerlinFilter } from "../Filter/PerlinFilter";
+import { parseFacing } from "./ParseFacing";
+import { BlockFacingFilter } from "../Filter/BlockFacingFilter";
 
 export type ParsingError = { mssg: string | string[] };
 export function isParsingError(error: any): error is ParsingError {
@@ -100,21 +102,30 @@ export function parseJsonFromFile(
     const perlin = parsePerlin(op.perlin);
     const onlyOnTerrains = parseTerrains(op.onlyOnTerrain, getTerrainById);
     const onlyOnLayer = parseLayers(op.onlyOnLayer, getLayerById);
-
+    const blockFacing = parseFacing(op.facing);
     //print all parsing errors
-    [layers, terrains, perlin, onlyOnTerrains, onlyOnLayer].forEach((a) => {
+    [
+      layers,
+      terrains,
+      perlin,
+      onlyOnTerrains,
+      onlyOnLayer,
+      blockFacing,
+    ].forEach((a) => {
       if (isParsingError(a)) {
         logError(a);
       }
     });
 
     //abort on any parsing errors
+    //repeat code so typescript recoginzes types afterwards.
     if (
       isParsingError(layers) ||
       isParsingError(terrains) ||
       isParsingError(perlin) ||
       isParsingError(onlyOnTerrains) ||
-      isParsingError(onlyOnLayer)
+      isParsingError(onlyOnLayer) ||
+      isParsingError(blockFacing)
     ) {
       log("skip faulty operation:" + op.name);
       continue;
@@ -145,6 +156,23 @@ export function parseJsonFromFile(
       );
       opFilters.push(perlinFilter);
     }
+
+    if (
+      blockFacing.east ||
+      blockFacing.west ||
+      blockFacing.north ||
+      blockFacing.south
+    ) {
+      const facingFilter = new BlockFacingFilter(
+        "BlockFacing",
+        blockFacing.north,
+        blockFacing.south,
+        blockFacing.east,
+        blockFacing.west
+      );
+      opFilters.push(facingFilter);
+    }
+
     const operation: GeneralOperation = {
       name: op.name,
       terrain: terrains,

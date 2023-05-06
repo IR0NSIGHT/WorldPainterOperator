@@ -26,7 +26,7 @@ export function isValidLayerConfig(json: object) {
  * @param isValidSingleObject test if input is a valid single object of desired type
  * @returns
  */
-function toTypedArray<Type>(
+export function toTypedArray<Type>(
   obj: object,
   isValidSingleObject: (obj: object) => boolean
 ): Type[] | ParsingError {
