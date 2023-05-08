@@ -10,6 +10,7 @@ import { StandardFilter } from "../Filter/Filter";
 import { PerlinFilter } from "../Filter/PerlinFilter";
 import { parseFacing } from "./ParseFacing";
 import { BlockFacingFilter } from "../Filter/BlockFacingFilter";
+import { parseDirectionalSlopeFilter } from "../Filter/DirectionalSlopeFilter";
 
 export type ParsingError = { mssg: string | string[] };
 export function isParsingError(error: any): error is ParsingError {
@@ -103,6 +104,8 @@ export function parseJsonFromFile(
     const onlyOnTerrains = parseTerrains(op.onlyOnTerrain, getTerrainById);
     const onlyOnLayer = parseLayers(op.onlyOnLayer, getLayerById);
     const blockFacing = parseFacing(op.facing);
+    const directedSlopeFilters = parseDirectionalSlopeFilter(op.slopeDir);
+    log("parsed Dir. Filters: " + JSON.stringify(directedSlopeFilters));
     //print all parsing errors
     [
       layers,
@@ -111,6 +114,7 @@ export function parseJsonFromFile(
       onlyOnTerrains,
       onlyOnLayer,
       blockFacing,
+      directedSlopeFilters,
     ].forEach((a) => {
       if (isParsingError(a)) {
         logError(a);
@@ -125,7 +129,8 @@ export function parseJsonFromFile(
       isParsingError(perlin) ||
       isParsingError(onlyOnTerrains) ||
       isParsingError(onlyOnLayer) ||
-      isParsingError(blockFacing)
+      isParsingError(blockFacing) ||
+      isParsingError(directedSlopeFilters)
     ) {
       log("skip faulty operation:" + op.name);
       continue;
@@ -172,6 +177,8 @@ export function parseJsonFromFile(
       );
       opFilters.push(facingFilter);
     }
+
+    directedSlopeFilters.forEach((f) => opFilters.push(f));
 
     const operation: GeneralOperation = {
       name: op.name,

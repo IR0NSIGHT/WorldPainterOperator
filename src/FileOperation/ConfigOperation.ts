@@ -7,10 +7,11 @@ type configFilter = {
   belowLevel: number;
   aboveDegrees: number;
   belowDegrees: number;
-  onlyOnTerrain: number[]|number;
+  onlyOnTerrain: number[] | number;
   onlyOnLayer: string[];
   perlin: configPerlin;
-  facing: string[]|string;
+  facing: string[] | string;
+  slopeDir: any;
 };
 
 export type terrainConfigOperation = {
@@ -24,6 +25,6 @@ export type layerConfigOperation = {
   layerValue: number;
 } & configOperation;
 
-export const isValidConfigOperationBody = ( op: any): boolean => {
-  return ('name' in op && op.name != undefined && typeof op.name == "string")
-}
+export const isValidConfigOperationBody = (op: any): boolean => {
+  return "name" in op && op.name != undefined && typeof op.name == "string";
+};

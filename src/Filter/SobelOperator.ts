@@ -35,13 +35,14 @@ export const sobel = (
   gradient.x += zVal(x - 1, y + 1) - zVal(x + 1, y + 1);
   gradient.x = gradient.x / 9;
 
-  gradient.y += zVal(x - 1, y - 1) - zVal(x - 1, y + 1);
-  gradient.y += 2 * zVal(x, y - 1) - 2 * zVal(x, y + 1);
-  gradient.y += zVal(x + 1, y - 1) - zVal(x + 1, y + 1);
+  gradient.y += zVal(x - 1, y + 1) - zVal(x - 1, y - 1);
+  gradient.y += 2 * zVal(x, y + 1) - 2 * zVal(x, y - 1);
+  gradient.y += zVal(x + 1, y + 1) - zVal(x + 1, y - 1);
   gradient.y = gradient.y / 9;
   return gradient;
 };
 
+/*
 export const largeSobel = (
   _x: number,
   _y: number,
@@ -68,3 +69,4 @@ export const largeSobel = (
 
   return 0;
 };
+*/
