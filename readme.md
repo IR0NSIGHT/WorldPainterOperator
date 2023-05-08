@@ -1,7 +1,7 @@
 # AdvancedOperator
 
 github: https://github.com/IR0NSIGHT/WorldPainterOperator  
-latest release/download link: https://github.com/IR0NSIGHT/WorldPainterOperator/actions/workflows/deploy.yml?query=branch%3Amaster+workflow%3Adeploy
+latest release/download link: https://github.com/IR0NSIGHT/WorldPainterOperator/releases
 
 The AdvancedOperator provides a way to run global operations in WorldPainter using
 config files.
@@ -145,12 +145,15 @@ a complex filter using all available standardfilters:
   "onlyOnLayer": "Frost"
 }
 ```
+
 ### Block Facing
+
 You can filter for blocks that have a free face pointing towards a direction:
 `"facing": ["N", "w"]`
 See "blockFacingEast.json" config for a working example
 
 ### Slope Facing
+
 You can filter for sloped blocks where the slope is facing a direction.
 See "slopeDirection.json" for a working example
 
