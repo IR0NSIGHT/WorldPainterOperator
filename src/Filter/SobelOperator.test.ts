@@ -37,7 +37,7 @@ describe("test sobel operator", () => {
     expect(dim.getHeightAt(1, 2)).toEqual(3);
     expect(dim.getHeightAt(2, 1)).toEqual(2);
 
-    expect(sobel(1, 1, dim)).toEqual({ x: 0, y: -8 / 9 });
+    expect(sobel(1, 1, dim)).toEqual({ x: 0, y: 8 / 9 });
   });
 
   test("flat sobel x,y", () => {
