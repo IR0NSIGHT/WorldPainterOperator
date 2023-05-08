@@ -145,6 +145,14 @@ a complex filter using all available standardfilters:
   "onlyOnLayer": "Frost"
 }
 ```
+### Block Facing
+You can filter for blocks that have a free face pointing towards a direction:
+`"facing": ["N", "w"]`
+See "blockFacingEast.json" config for a working example
+
+### Slope Facing
+You can filter for sloped blocks where the slope is facing a direction.
+See "slopeDirection.json" for a working example
 
 #### Perlin Noise
 

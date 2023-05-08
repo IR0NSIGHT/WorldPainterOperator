@@ -1,0 +1,18 @@
+{
+    "operations": [
+        {
+            "name": "clear annotations", 
+            "layer": [ ["Annotations", 0] ]
+        }, 
+        {
+            "name": "mark north annotations orange", 
+            "slopeDir": [ {"dir": 0, "maxOffset": 15} ], 
+            "layer": [ ["Annotations", 2], ["Frost", 1] ]
+        }, 
+        {
+            "name": "mark east with annotations white", 
+            "slopeDir": {"dir": 90, "maxOffset": 30}, 
+            "layer": [ ["Annotations", 1], ["Frost", 1] ]
+        }
+    ]
+}
