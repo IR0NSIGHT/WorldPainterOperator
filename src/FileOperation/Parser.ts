@@ -105,7 +105,6 @@ export function parseJsonFromFile(
     const onlyOnLayer = parseLayers(op.onlyOnLayer, getLayerById);
     const blockFacing = parseFacing(op.facing);
     const directedSlopeFilters = parseDirectionalSlopeFilter(op.slopeDir);
-    log("parsed Dir. Filters: " + JSON.stringify(directedSlopeFilters));
     //print all parsing errors
     [
       layers,
