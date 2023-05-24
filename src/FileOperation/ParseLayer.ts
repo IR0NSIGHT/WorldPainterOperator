@@ -2,7 +2,10 @@ import { Layer } from "../Layer/Layer";
 import { ParsingError, isParsingError } from "./Parser";
 
 export type ConfigLayer = [string, number];
-export type LayerSetting = { layer: Layer; value: number };
+export type LayerSetting = LayerValue;
+
+export const layerToJSON = (l: LayerSetting): { layer: string, value: number} => ({ layer: l.layer.getName(), value: l.value})
+
 function isConfigLayer(obj: any): obj is ConfigLayer {
   return (
     Array.isArray(obj) &&
@@ -46,21 +49,35 @@ export function toTypedArray<Type>(
   return typedArray;
 }
 
+export type LayerValue = { layer: Layer; value: number }
+
 export const parseLayers = (
   layer: object,
   getLayerById: (id: string) => Layer | ParsingError
-): Layer[] | ParsingError => {
-  const layerIds = toTypedArray<string>(layer, (l) => typeof l === "string");
+): LayerValue[] | ParsingError => {
+  const layerIds = toTypedArray<[string, number]>(
+    layer,
+    (l) =>
+      Array.isArray(l) && 
+      l.length == 2 &&
+      typeof l[0] === "string" &&
+      typeof l[1] === "number"
+  );
   if (isParsingError(layerIds)) {
     return { mssg: "can not parse layer(s): " + layer };
   }
-  const parsedLayers = layerIds.map(getLayerById);
-  if (parsedLayers.some(isParsingError)) {
+  const parsedLayers = layerIds.map((l) => ({
+    layer: getLayerById(l[0]),
+    value: l[1],
+  }));
+  if (parsedLayers.some((a) => isParsingError(a.layer))) {
     return {
-      mssg: parsedLayers.filter(isParsingError).map(a => a.mssg.toString()),
+      mssg: parsedLayers
+        .filter(isParsingError)
+        .map((a) => (a.layer as ParsingError).mssg.toString()),
     };
   }
-  return parsedLayers as Layer[];
+  return parsedLayers as LayerValue[];
 };
 
 export const parseLayerSetting = (
@@ -78,10 +95,9 @@ export const parseLayerSetting = (
   }));
   if (parsedLayers.some((a) => isParsingError(a.layer))) {
     return {
-      mssg:
-        parsedLayers
-          .filter((a) => isParsingError(a.layer))
-          .map((a) => (a.layer as ParsingError).mssg.toString()),
+      mssg: parsedLayers
+        .filter((a) => isParsingError(a.layer))
+        .map((a) => (a.layer as ParsingError).mssg.toString()),
     };
   }
   return parsedLayers as LayerSetting[];

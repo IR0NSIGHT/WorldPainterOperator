@@ -12,6 +12,7 @@ type configFilter = {
   perlin: configPerlin;
   facing: string[] | string;
   slopeDir: any;
+  random: any;
 };
 
 export type terrainConfigOperation = {

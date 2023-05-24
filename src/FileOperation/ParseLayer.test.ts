@@ -4,7 +4,7 @@ import { isParsingError } from "./Parser";
 
 describe("parse layers from config", () => {
   test("parse single entry layer", () => {
-    const data: ConfigLayer = ["Frost", 1];
+    const data: ConfigLayer = ["Frost", 42];
 
     const getLayerById = (id: string): Layer => {
       return {
@@ -27,7 +27,8 @@ describe("parse layers from config", () => {
     if (isParsingError(parsed)) return;
     expect(parsed[0].layer.getId()).toBe("Frost");
     expect(parsed[0].layer.getName()).toBe("name_Frost");
-    expect(parsed[0].value).toBe(1);
+    expect(parsed[0].value).toBe(42);
+
   });
 
   test("parse multiple layers", () => {

@@ -5,12 +5,14 @@ import { log, logError } from "../log";
 import { configOperation, isValidConfigOperationBody } from "./ConfigOperation";
 import { parseLayerSetting, parseLayers } from "./ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
-import { parsePerlin, safeParseNumber } from "./ParseFilter";
+import { parsePerlin } from "./ParseFilter";
 import { StandardFilter } from "../Filter/Filter";
 import { PerlinFilter } from "../Filter/PerlinFilter";
 import { parseFacing } from "./ParseFacing";
 import { BlockFacingFilter } from "../Filter/BlockFacingFilter";
 import { parseDirectionalSlopeFilter } from "../Filter/DirectionalSlopeFilter";
+import { parseRandomFilter } from "../Filter/RandomFilter";
+import { safeParseNumber } from "./ParseNumber";
 
 export type ParsingError = { mssg: string | string[] };
 export function isParsingError(error: any): error is ParsingError {
@@ -22,6 +24,14 @@ export function isParsingError(error: any): error is ParsingError {
         error.mssg.every((a: any) => typeof a == "string")))
   );
 }
+
+export const mssgArr = (error: ParsingError): string[] => {
+  if (Array.isArray(error.mssg)) {
+    return error.mssg;
+  }
+  return [error.mssg];
+};
+
 export const parseTerrains = (
   terrain: number | number[],
   getTerrainById: (id: number) => Terrain
@@ -62,6 +72,105 @@ function loadConfig(filePath: string): config | ParsingError {
   }
 }
 
+export const parseFullOperation = (
+  op: configOperation
+): GeneralOperation | ParsingError => {
+  log("parse operation: " + op.name);
+  const layers = parseLayerSetting(op.layer, getLayerById);
+  const terrains = parseTerrains(op.terrain, getTerrainById);
+  const perlin = parsePerlin(op.perlin);
+  const onlyOnTerrains = parseTerrains(op.onlyOnTerrain, getTerrainById);
+  const onlyOnLayer = parseLayers(op.onlyOnLayer, getLayerById);
+  const blockFacing = parseFacing(op.facing);
+  const directedSlopeFilters = parseDirectionalSlopeFilter(op.slopeDir);
+  const random = parseRandomFilter(op.random);
+
+  const errors: string[] = [];
+  //print all parsing errors
+  [
+    layers,
+    terrains,
+    perlin,
+    onlyOnTerrains,
+    onlyOnLayer,
+    blockFacing,
+    directedSlopeFilters,
+    random,
+  ]
+    .filter(isParsingError)
+    .forEach((a) => mssgArr(a).forEach((m) => errors.push(m)));
+
+  //abort on any parsing errors
+  //repeat code so typescript recoginzes types afterwards.
+  if (
+    isParsingError(layers) ||
+    isParsingError(terrains) ||
+    isParsingError(perlin) ||
+    isParsingError(onlyOnTerrains) ||
+    isParsingError(onlyOnLayer) ||
+    isParsingError(blockFacing) ||
+    isParsingError(directedSlopeFilters) ||
+    isParsingError(random)
+  ) {
+    return { mssg: errors };
+  }
+
+  if (layers.length == 0 && terrains.length == 0) {
+    return { mssg: "skip operation with no effect: " + op.name };
+  }
+
+  const opFilters = [];
+
+  const basicFilter: FilterInterface = new StandardFilter(
+    "Standard",
+    safeParseNumber(op.aboveLevel),
+    safeParseNumber(op.belowLevel),
+    safeParseNumber(op.aboveDegrees),
+    safeParseNumber(op.belowDegrees),
+    onlyOnTerrains,
+    onlyOnLayer
+  );
+  opFilters.push(basicFilter); //TODO skip if unused
+
+  //TODO unify "test if filter was used, if so skip" for all filter types.
+  if (perlin !== undefined) {
+    const perlinFilter = new PerlinFilter(
+      perlin.seed,
+      perlin.scale,
+      perlin.threshold,
+      perlin.amplitude
+    );
+    opFilters.push(perlinFilter);
+  }
+
+  if (
+    blockFacing.east ||
+    blockFacing.west ||
+    blockFacing.north ||
+    blockFacing.south
+  ) {
+    const facingFilter = new BlockFacingFilter(
+      "BlockFacing",
+      blockFacing.north,
+      blockFacing.south,
+      blockFacing.east,
+      blockFacing.west
+    );
+    opFilters.push(facingFilter);
+  }
+
+  directedSlopeFilters.forEach((f) => opFilters.push(f));
+  random.forEach((f) => opFilters.push(f));
+
+  const operation: GeneralOperation = {
+    name: op.name,
+    terrain: terrains,
+    layer: layers,
+    filter: opFilters,
+  };
+  return operation;
+};
+
 export function parseJsonFromFile(
   filePath: string
 ): GeneralOperation[] | ParsingError {
@@ -97,94 +206,11 @@ export function parseJsonFromFile(
 
   let op: configOperation;
   for (op of configOperations) {
-    log("parse operation: " + op.name);
-    const layers = parseLayerSetting(op.layer, getLayerById);
-    const terrains = parseTerrains(op.terrain, getTerrainById);
-    const perlin = parsePerlin(op.perlin);
-    const onlyOnTerrains = parseTerrains(op.onlyOnTerrain, getTerrainById);
-    const onlyOnLayer = parseLayers(op.onlyOnLayer, getLayerById);
-    const blockFacing = parseFacing(op.facing);
-    const directedSlopeFilters = parseDirectionalSlopeFilter(op.slopeDir);
-    //print all parsing errors
-    [
-      layers,
-      terrains,
-      perlin,
-      onlyOnTerrains,
-      onlyOnLayer,
-      blockFacing,
-      directedSlopeFilters,
-    ].forEach((a) => {
-      if (isParsingError(a)) {
-        logError(a);
-      }
-    });
-
-    //abort on any parsing errors
-    //repeat code so typescript recoginzes types afterwards.
-    if (
-      isParsingError(layers) ||
-      isParsingError(terrains) ||
-      isParsingError(perlin) ||
-      isParsingError(onlyOnTerrains) ||
-      isParsingError(onlyOnLayer) ||
-      isParsingError(blockFacing) ||
-      isParsingError(directedSlopeFilters)
-    ) {
-      log("skip faulty operation:" + op.name);
+    const operation = parseFullOperation(op);
+    if (isParsingError(operation)) {
+      logError(operation);
       continue;
     }
-
-    if (layers.length == 0 && terrains.length == 0) {
-      log("skip operation with no effect: " + op.name);
-      continue;
-    }
-
-    const basicFilter: FilterInterface = new StandardFilter(
-      "Standard",
-      safeParseNumber(op.aboveLevel),
-      safeParseNumber(op.belowLevel),
-      safeParseNumber(op.aboveDegrees),
-      safeParseNumber(op.belowDegrees),
-      onlyOnTerrains,
-      onlyOnLayer
-    );
-
-    const opFilters = [basicFilter];
-    if (perlin !== undefined) {
-      const perlinFilter = new PerlinFilter(
-        perlin.seed,
-        perlin.scale,
-        perlin.threshold,
-        perlin.amplitude
-      );
-      opFilters.push(perlinFilter);
-    }
-
-    if (
-      blockFacing.east ||
-      blockFacing.west ||
-      blockFacing.north ||
-      blockFacing.south
-    ) {
-      const facingFilter = new BlockFacingFilter(
-        "BlockFacing",
-        blockFacing.north,
-        blockFacing.south,
-        blockFacing.east,
-        blockFacing.west
-      );
-      opFilters.push(facingFilter);
-    }
-
-    directedSlopeFilters.forEach((f) => opFilters.push(f));
-
-    const operation: GeneralOperation = {
-      name: op.name,
-      terrain: terrains,
-      layer: layers,
-      filter: opFilters,
-    };
     allOperations.push(operation);
   }
   if (allOperations.length == 0) {

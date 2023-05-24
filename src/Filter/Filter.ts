@@ -1,4 +1,5 @@
 import { Dimension } from "../Dimension";
+import { LayerValue, layerToJSON } from "../FileOperation/ParseLayer";
 import { Layer, isBitLayer } from "../Layer/Layer";
 import { Terrain } from "../Terrain/Terrain";
 import { log } from "../log";
@@ -39,7 +40,7 @@ export class StandardFilter extends Filter {
   aboveDegrees: number;
   belowDegrees: number;
   onlyOnTerrain: Terrain[];
-  onlyOnScalarLayer: Layer[];
+  onlyOnScalarLayer: LayerValue[];
   onlyOnBitLayer: Layer[];
 
   test(x: number, y: number, dimension: Dimension): boolean {
@@ -76,9 +77,10 @@ export class StandardFilter extends Filter {
   private isOnLayer(x: number, y: number, dimension: Dimension): boolean {
     return (
       (this.onlyOnScalarLayer.length == 0 && this.onlyOnBitLayer.length == 0) ||
-      this.onlyOnScalarLayer.some(
-        (l) => dimension.getLayerValueAt(l, x, y) != 0
-      ) ||
+      this.onlyOnScalarLayer.some((l) => {
+        const found = dimension.getLayerValueAt(l.layer, x, y);
+        return (l.value === -1 && found !== 0) || found == l.value;
+      }) ||
       this.onlyOnBitLayer.some((l) => dimension.getBitLayerValueAt(l, x, y))
     );
   }
@@ -90,7 +92,7 @@ export class StandardFilter extends Filter {
     aboveDegrees: number,
     belowDegrees: number,
     onlyOnTerrain: Terrain[],
-    onlyOnLayer: Layer[]
+    onlyOnLayer: LayerValue[]
   ) {
     super(id);
     this.id = id;
@@ -100,25 +102,18 @@ export class StandardFilter extends Filter {
     this.belowDegrees = belowDegrees; //Math.tan(belowDegrees/57.3)
 
     this.onlyOnScalarLayer = onlyOnLayer.filter(
-      (l) => !isBitLayer(l.getDataSize())
+      (l) => !isBitLayer(l.layer.getDataSize())
     );
-    this.onlyOnBitLayer = onlyOnLayer.filter((l) =>
-      isBitLayer(l.getDataSize())
-    );
+    this.onlyOnBitLayer = onlyOnLayer
+      .filter((l) => isBitLayer(l.layer.getDataSize()))
+      .map((l) => l.layer);
     this.onlyOnTerrain = onlyOnTerrain;
-  }
-}
 
-export class RandomFilter extends Filter {
-  chance: number;
-  test(_x: number, _y: number, _dimension: any): boolean {
-    const point = Math.random() * 100;
-    return point < this.chance;
-  }
-
-  constructor(chance: number) {
-    super("random_" + chance);
-    this.chance = chance;
+    log(
+      "standard filter with onlyOnLayer: " +
+        JSON.stringify(this.onlyOnScalarLayer.map(layerToJSON)) +
+        JSON.stringify(this.onlyOnBitLayer.map((a) => a.getName()))
+    );
   }
 }
 
