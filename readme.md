@@ -29,13 +29,12 @@ hit run
 
 ## Building a config
 
-in the configs folder you will find some example configs.
-the config must obey the JSON format, with the exception that comments are allowed in the form of (a comment)
-comments can span multiple lines.
+in the configs folder you will find some example configs of operations to transform your worldpainter world.
+the config is written in the JSON format.
 
 ### Basic structure of config
 
-all configs have the same basic structure:
+Each config has the same basic structure, which includes a list of operations that go inside the "operations" square brackets.
 
 ```json
 {
@@ -50,21 +49,21 @@ check out the other configs too, to see whats possible and how everything works.
 
 ### Basic structure of operations
 
-Operations follow a basic layout too.
+Operations follow a basic layout. They contain a name, terrains, layers and filters.
 in its most basic form an operation has a name, and (optional) some actions:
 
 ```json
 {
   "name": "my first operation, all is grass",
-  "terrain": 0
+  "terrain": 0 //set all blocks to 0, grass
 }
 ```
 
 ```json
 {
   "name": "set everything to grass/dirt and frost",
-  "terrain": [0, 1],
-  "layer": ["Frost", 1]
+  "terrain": [0, 1], //set all blocks to grass or dirt, choose randomly
+  "layer": ["Frost", 1] //set the frost layer to "ON" for all blocks
 }
 ```
 
@@ -119,18 +118,18 @@ you can also use custom layers (Ground Cover etc.) by referencing them by name. 
 
 ## Filters
 
-You can apply your terrain and layers based on filters.  
+You can apply your terrain and layers based on filters.
 A simple operation using filters is
 
 ```json
 {
   "name": "replace grass and clay with dirt",
-  "onlyOnTerrain": [0, 35],
+  "onlyOnTerrain": [0, 35], //apply terrain only if the current block is grass (0) or clay (35)
   "terrain": [2]
 }
 ```
 
-a complex filter using all available standardfilters:
+a more complex filter using all available standardfilters:
 
 ```json
 {
@@ -139,7 +138,7 @@ a complex filter using all available standardfilters:
   "terrain": [0, 0, 0, 2, 3, 4],
   "aboveLevel": 90,
   "belowLevel": 150,
-  "belowDegrees": 40,
+  "belowDegrees": 40, //slope
   "belowDegrees": 60,
   "onlyOnTerrain": 0,
   "onlyOnLayer": "Frost"
@@ -159,27 +158,28 @@ See "slopeDirection.json" for a working example
 
 #### Perlin Noise
 
-you can use the perlin noise filter to generate natural shapes:
+you can use the perlin noise filter to generate natural shapes:  
+![Perlin Noise](imgs/Perlin_Noise.png)
 
 ```json
 {
   "name": "big shape frost",
   "layer": ["Frost", 1],
   "perlin": {
-    "seed": 42069.0,
-    "scale": 100.0,
-    "amplitude": 1.0,
-    "threshold": 0.4
+    "seed": 42069.0, //noise with the same number always generates the same shape
+    "scale": 100.0, //size of the "bubbles"
+    "amplitude": 1.0, //dont touch
+    "threshold": 0.4 //noise ranges from 0-1
   }
 }
 ```
 
-scale is how big the "bubbles" are, threshold = 0.4 means 40% of the tested area will be filled.  
+threshold = 0.4 means that every block with a noise value of 0.4 and higher will be filled with frost.  
 amplitude is not relevant and should always stay 1.
 
 ## Limitations
 
-All operations are global, no restriction to area operated on is possible
+All operations are global, no restriction to area operated on is possible apart from the filters.
 
 ## Planned Expansion
 
