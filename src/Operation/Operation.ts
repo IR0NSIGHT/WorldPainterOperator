@@ -79,24 +79,31 @@ export function executeOperations(
       log("\tLayer\t" + op.layer.map((a) => [a.layer.getName(), a.value]));
   }
 
-  const startX: number = dimension.getLowestX() * 128;
-  const startY: number = dimension.getLowestY() * 128;
-  const endX: number = startX + dimension.getWidth() * 128;
-  const endY: number = startY + dimension.getHeight() * 128;
+  const startX: number = dimension.getLowestX();
+  const startY: number = dimension.getLowestY();
+  const endX: number = startX + dimension.getWidth();
+  const endY: number = startY + dimension.getHeight();
 
-  const notifyerStep = Math.floor((endX - startX) / 5);
+  const notifyerStep = Math.floor((endX - startX) / 15);
   log("start: " + [startX, startY] + " end: " + [endX, endY]);
-  let x,
-    y = 0;
-  for (x = startX; x < endX; x++) {
-    for (y = startY; y < endY; y++) {
-      for (const op of ops) {
-        if (testOperationFilters(x, y, op, dimension))
-          applyOperation(x, y, op, dimension);
+  for (let chunkX = startX; chunkX < endX; chunkX++) {
+    for (let chunkY = startY; chunkY < endY; chunkY++) {
+      const chunk = { x: chunkX, y: chunkY };
+      for (let blockX = 0; blockX < 128; blockX++) {
+        for (let blockY = 0; blockY < 128; blockY++) {
+          const point = {
+            x: chunk.x * 128 + blockX,
+            y: chunk.y * 128 + blockY,
+          };
+          for (const op of ops) {
+            if (testOperationFilters(chunkX, chunkY, op, dimension))
+              applyOperation(point.x, point.y, op, dimension);
+          }
+        }
       }
     }
-    if (x % notifyerStep == 0) {
-      log("" + ((x - startX) / (endX - startX)) * 100 + "%");
+    if (chunkX % notifyerStep == 0) {
+      log("" + Math.round(((chunkX - startX) / (endX - startX)) * 100) + "%");
     }
   }
   log("100%");
