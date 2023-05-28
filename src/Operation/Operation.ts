@@ -96,7 +96,7 @@ export function executeOperations(
             y: chunk.y * 128 + blockY,
           };
           for (const op of ops) {
-            if (testOperationFilters(chunkX, chunkY, op, dimension))
+            if (testOperationFilters(point.x, point.y, op, dimension))
               applyOperation(point.x, point.y, op, dimension);
           }
         }
