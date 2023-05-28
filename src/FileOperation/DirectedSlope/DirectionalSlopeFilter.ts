@@ -1,7 +1,7 @@
-import { parseDirectionFilter } from "../FileOperation/ParseDirectionalSlope";
-import { ParsingError, isParsingError } from "../FileOperation/Parser";
-import { Filter } from "./Filter";
-import { directedSlope } from "./SobelOperator";
+import { parseDirectionSetting } from "./ParseDirectionalSlope";
+import { ParsingError, isParsingError } from "../Parser";
+import { Filter } from "../../Filter/Filter";
+import { directedSlope } from "../../Filter/SobelOperator";
 
 export const mod = (a: number, mod: number): number => {
   return ((a % mod) + mod) % mod;
@@ -14,7 +14,7 @@ export const smallestAngle = (angleA: number, angleB: number): number => {
 export const parseDirectionalSlopeFilter = (
   config: any
 ): DirectionalSlopeFilter[] | ParsingError => {
-  const parsedDirections = parseDirectionFilter(config);
+  const parsedDirections = parseDirectionSetting(config);
   if (isParsingError(parsedDirections)) {
     return parsedDirections;
   }

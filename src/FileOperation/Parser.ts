@@ -10,7 +10,7 @@ import { StandardFilter } from "../Filter/Filter";
 import { PerlinFilter } from "../Filter/PerlinFilter";
 import { parseFacing } from "./ParseFacing";
 import { BlockFacingFilter } from "../Filter/BlockFacingFilter";
-import { parseDirectionalSlopeFilter } from "../Filter/DirectionalSlopeFilter";
+import { parseDirectionalSlopeFilter } from "./DirectedSlope/DirectionalSlopeFilter";
 import { parseRandomFilter } from "../Filter/RandomFilter";
 import { safeParseNumber } from "./ParseNumber";
 
