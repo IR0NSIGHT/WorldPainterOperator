@@ -97,4 +97,27 @@ describe("parse config", () => {
     expect(() => parseOperations(jsonString)).toThrow("logging error!can not parse layer(s): Frost")
   })
 
+  test("example config for onlyOnLayer",() =>{
+    const jsonString = `
+    {
+    "operations": [
+        {
+            "name": "high ground pines with forest floor", 
+            "layer": ["Pines", 7], 
+            "terrain": [0, 0, 0, 2, 3, 4], 
+            "aboveLevel": 90, 
+            "belowLevel": 150, 
+            "aboveDegrees": 30, 
+            "belowDegrees": 60, 
+            "onlyOnTerrain": 0, 
+            "onlyOnLayer": [["Frost",-1],["Annotations",0],["Pines",3]]
+        }
+    ]
+}
+
+    `
+    const parsedOp = parseOperations(jsonString)
+    expect(isParsingError(parsedOp)).toBeFalsy();
+  })
+
 });

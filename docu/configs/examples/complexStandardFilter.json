@@ -1,7 +1,7 @@
 {
     "operations": [
         {
-            "name": "high ground pines with forest floor", 
+            "name": "high ground pines with forest floor: frost != 0, annotations absent, pine value == 3",
             "layer": ["Pines", 7], 
             "terrain": [0, 0, 0, 2, 3, 4], 
             "aboveLevel": 90, 
@@ -9,7 +9,7 @@
             "aboveDegrees": 30, 
             "belowDegrees": 60, 
             "onlyOnTerrain": 0, 
-            "onlyOnLayer": "Frost"
+            "onlyOnLayer": [["Frost",-1],["Annotations",0],["Pines",3]]
         }
     ]
 }

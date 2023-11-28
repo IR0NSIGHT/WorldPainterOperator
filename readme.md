@@ -141,7 +141,7 @@ a more complex filter using all available standardfilters:
   "belowDegrees": 40, //slope
   "belowDegrees": 60,
   "onlyOnTerrain": 0,
-  "onlyOnLayer": "Frost"
+  "onlyOnLayer": ["Frost",1]
 }
 ```
 
