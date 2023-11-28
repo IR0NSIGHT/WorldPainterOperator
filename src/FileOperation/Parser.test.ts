@@ -1,15 +1,21 @@
-import { Terrain } from "../Terrain/Terrain";
-import { parseTerrains } from "./Parser";
+import {getLayerById, WorldpainterApi} from "../worldpainterApi/worldpainterApi";
+import {isParsingError, parseOperations, parseTerrains} from "./Parser";
+import {parseLayers} from "./ParseLayer";
+import {Layer} from "../Layer/Layer";
+
+jest.mock('../log')
+
+jest.mock('../WorldpainterApi/WorldpainterApi');
 
 describe("parse config", () => {
   test("parse multi entry terrain array", () => {
-    const myTerrain = (terrainName: string): Terrain => ({
+    const myTerrain = (terrainName: string): WorldpainterApi => ({
       getName() {
         return terrainName;
       },
     });
 
-    const getTerrainById = (id: number): Terrain => {
+    const getTerrainById = (id: number): WorldpainterApi => {
       return myTerrain(id.toString());
     };
 
@@ -19,13 +25,13 @@ describe("parse config", () => {
   });
 
   test("parse single entry terrain", () => {
-    const myTerrain = (terrainName: string): Terrain => ({
+    const myTerrain = (terrainName: string): WorldpainterApi => ({
       getName() {
         return terrainName;
       },
     });
 
-    const getTerrainById = (id: number): Terrain => {
+    const getTerrainById = (id: number): WorldpainterApi => {
       return myTerrain(id.toString());
     };
 
@@ -33,4 +39,37 @@ describe("parse config", () => {
 
     expect(parsed).toHaveLength(1);
   });
+
+  test("parse single entry annotation", () => {
+    jest.mock('../log.ts', () => ({
+      log: jest.fn(),
+    }));
+
+    const op = {
+      onlyOnLayer: ["Frost", 1]
+    };
+
+    const l = parseLayers(op.onlyOnLayer, getLayerById);
+    expect(isParsingError(l)).toBeFalsy();
+
+    const jsonString: string = `
+    {
+      "operations": [
+        {
+          "name": "Grass 1",
+          "terrain": [0],
+          "aboveLevel": -64,
+          "belowLevel": 200,
+          "aboveDegrees": 0,
+          "onlyOnLayer": ["Frost",1]
+        }
+      ]
+    }
+    `
+
+    const parsedOp = parseOperations(jsonString)
+    expect(isParsingError(parsedOp)).toBeFalsy();
+
+  });
+
 });

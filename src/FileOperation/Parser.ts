@@ -1,6 +1,5 @@
-import { getLayerById } from "../Layer/Layer";
 import { GeneralOperation } from "../Operation/Operation";
-import { Terrain, getTerrainById } from "../Terrain/Terrain";
+import {WorldpainterApi, getTerrainById, getLayerById} from "../worldpainterApi/worldpainterApi";
 import { log, logError } from "../log";
 import { configOperation, isValidConfigOperationBody } from "./ConfigOperation";
 import { parseLayerSetting, parseLayers } from "./ParseLayer";
@@ -34,8 +33,8 @@ export const mssgArr = (error: ParsingError): string[] => {
 
 export const parseTerrains = (
   terrain: number | number[],
-  getTerrainById: (id: number) => Terrain
-): Terrain[] | ParsingError => {
+  getTerrainById: (id: number) => WorldpainterApi
+): WorldpainterApi[] | ParsingError => {
   if (Array.isArray(terrain) && terrain.every((a) => typeof a === "number")) {
     return terrain.map((a) => getTerrainById(a));
   }
@@ -48,7 +47,7 @@ export const parseTerrains = (
 
 type config = { operations: configOperation[] };
 
-function loadConfig(filePath: string): config | ParsingError {
+function loadConfig(filePath: string): string | ParsingError {
   let bytes;
   try {
     // @ts-ignore java object
@@ -63,8 +62,7 @@ function loadConfig(filePath: string): config | ParsingError {
     // @ts-ignore java object
     let jsonString: string = new java.lang.String(bytes);
     jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)" //TODO json with comments format
-    const out: any = JSON.parse(jsonString);
-    return out;
+    return jsonString
   } catch (e) {
     return {
       mssg: "could not parse JSON object from config file, please check JSON syntax",
@@ -171,20 +169,12 @@ export const parseFullOperation = (
   return operation;
 };
 
-export function parseJsonFromFile(
-  filePath: string
-): GeneralOperation[] | ParsingError {
+export function parseOperations(operationJson: string):   GeneralOperation[] | ParsingError {
+  const config: config = JSON.parse(operationJson);
+
   const allOperations: GeneralOperation[] = [];
-
-  const loadedConfig = loadConfig(filePath);
-  if (isParsingError(loadedConfig)) {
-    logError(loadedConfig);
-    return [];
-  }
-  log("config has valid JSON format.");
-
-  const hasOpKey = loadedConfig.operations != undefined;
-  const isArr = Array.isArray(loadedConfig.operations);
+  const hasOpKey = config.operations != undefined;
+  const isArr = Array.isArray(config.operations);
   const hasConfigBody = hasOpKey && isArr;
   if (!hasConfigBody) {
     return {
@@ -193,16 +183,16 @@ export function parseJsonFromFile(
   }
   log("config has valid body");
 
-  if (!loadedConfig.operations.every(isValidConfigOperationBody)) {
-    const invalidOps = loadedConfig.operations
-      .filter((a) => !isValidConfigOperationBody(a))
-      .map((a) => "op_name: " + a.name + "\n op_string:" + JSON.stringify(a));
+  if (!config.operations.every(isValidConfigOperationBody)) {
+    const invalidOps = config.operations
+        .filter((a: any) => !isValidConfigOperationBody(a))
+        .map((a) => "op_name: " + a.name + "\n op_string:" + JSON.stringify(a));
 
     return {
       mssg: "some operations have invalid bodies: " + invalidOps,
     };
   }
-  const configOperations: configOperation[] = loadedConfig.operations;
+  const configOperations: configOperation[] = config.operations;
 
   let op: configOperation;
   for (op of configOperations) {
@@ -217,4 +207,18 @@ export function parseJsonFromFile(
     return { mssg: "Abort because no valid operations were read." };
   }
   return allOperations;
+}
+export function parseJsonFromFile(
+  filePath: string
+): GeneralOperation[] | ParsingError {
+
+
+  const loadedConfigString = loadConfig(filePath);
+  if (isParsingError(loadedConfigString)) {
+    logError(loadedConfigString);
+    return [];
+  }
+  log("config has valid JSON format.");
+
+  return parseOperations(loadedConfigString)
 }

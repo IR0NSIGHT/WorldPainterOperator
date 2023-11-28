@@ -30,7 +30,7 @@ export function isValidLayerConfig(json: object) {
  * @returns
  */
 export function toTypedArray<Type>(
-  obj: object,
+  obj: any,
   isValidSingleObject: (obj: object) => boolean
 ): Type[] | ParsingError {
   let typedArray: Type[] = [];

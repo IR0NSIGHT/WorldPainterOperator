@@ -85,6 +85,7 @@ describe("parse single facing from config", () => {
 describe("parse multiple facing from config", () => {
   test("parse 'NSEW'", () => {
     const facingJson = ["N", "S", "E", "W"];
+    const ff = parseFacing;
     const parsed = parseFacing(facingJson);
     expect(isParsingError(parsed)).toBeFalsy();
     expect((parsed as Facing).north).toBeTruthy();

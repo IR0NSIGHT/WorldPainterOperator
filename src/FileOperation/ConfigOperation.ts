@@ -9,8 +9,8 @@ type configFilter = {
   belowDegrees: number;
   onlyOnTerrain: number[] | number;
   onlyOnLayer: string[];
-  perlin: configPerlin;
-  facing: string[] | string;
+  perlin: configPerlin | undefined;
+  facing: string[] | string | undefined;
   slopeDir: any;
   random: any;
 };

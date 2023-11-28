@@ -1,7 +1,7 @@
 import { Dimension } from "../Dimension";
 import { LayerSetting } from "../FileOperation/ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
-import { Terrain } from "../Terrain/Terrain";
+import { WorldpainterApi } from "../worldpainterApi/worldpainterApi";
 import { log } from "../log";
 
 const testOperationFilters = (
@@ -16,7 +16,7 @@ const testOperationFilters = (
 
 export type GeneralOperation = {
   name: string;
-  terrain: Terrain[];
+  terrain: WorldpainterApi[];
   layer: LayerSetting[];
   filter: FilterInterface[];
 };
@@ -74,7 +74,7 @@ export function executeOperations(
     if (op.filter.length != 0) log("\tFilter\t" + op.filter.map((f) => f.id));
 
     if (op.terrain.length != 0)
-      log("\tTerrain\t" + op.terrain.map((a) => a.getName()));
+      log("\tWorldpainterApi\t" + op.terrain.map((a) => a.getName()));
     if (op.layer.length != 0)
       log("\tLayer\t" + op.layer.map((a) => [a.layer.getName(), a.value]));
   }

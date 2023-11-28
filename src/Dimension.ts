@@ -1,10 +1,10 @@
 import { Layer } from "./Layer/Layer";
-import { Terrain } from "./Terrain/Terrain";
+import { WorldpainterApi } from "./worldpainterApi/worldpainterApi";
 
 export type Dimension = {
   getCustomLayers: () => Layer[];
 
-  setTerrainAt: (x: number, y: number, terrain: Terrain) => void;
+  setTerrainAt: (x: number, y: number, terrain: WorldpainterApi) => void;
 
   setLayerValueAt: (
     layer: Layer,
@@ -26,7 +26,7 @@ export type Dimension = {
 
   getHeightAt: (x: number, y: number) => number;
   getSlope: (x: number, y: number) => number;
-  getTerrainAt: (x: number, y: number) => Terrain;
+  getTerrainAt: (x: number, y: number) => WorldpainterApi;
 
   getLowestX: () => number;
   getLowestY: () => number;

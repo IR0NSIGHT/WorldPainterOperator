@@ -20,6 +20,14 @@ const isDirection = (a: any): a is Direction => {
 };
 
 export const parseFacing = (facing: any): Facing | ParsingError => {
+  if (facing == undefined) {
+    return {
+      north: false,
+      south: false,
+      east: false,
+      west: false,
+    };
+  }
   const configFacing = toTypedArray<string>(
     facing,
     (a: any) => typeof a === "string"
