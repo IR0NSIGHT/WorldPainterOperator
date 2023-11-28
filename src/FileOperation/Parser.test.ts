@@ -6,7 +6,7 @@ import {GeneralOperation} from "../Operation/Operation";
 
 jest.mock('../log')
 
-jest.mock('../WorldpainterApi/WorldpainterApi');
+jest.mock('../worldpainterApi/worldpainterApi');
 
 describe("parse config", () => {
   test("parse multi entry terrain array", () => {
