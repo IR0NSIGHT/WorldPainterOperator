@@ -1,7 +1,7 @@
 import { Dimension } from "../Dimension";
 import { LayerValue, layerToJSON } from "../FileOperation/ParseLayer";
 import { Layer, isBitLayer } from "../Layer/Layer";
-import { WorldpainterApi } from "../worldpainterApi/worldpainterApi";
+import { Terrain } from "../worldpainterApi/worldpainterApi";
 import { log } from "../log";
 import { Comparator, FilterInterface } from "./FilterInterface";
 
@@ -39,7 +39,7 @@ export class StandardFilter extends Filter {
   belowLevel: number;
   aboveDegrees: number;
   belowDegrees: number;
-  onlyOnTerrain: WorldpainterApi[];
+  onlyOnTerrain: Terrain[];
   onlyOnScalarLayer: LayerValue[];
   onlyOnBitLayer: Layer[];
 
@@ -66,7 +66,7 @@ export class StandardFilter extends Filter {
     );
   }
 
-  private isOnTerrain(terrain: WorldpainterApi) {
+  private isOnTerrain(terrain: Terrain) {
     const terrainName = terrain.getName();
     return (
       this.onlyOnTerrain.length == 0 ||
@@ -91,7 +91,7 @@ export class StandardFilter extends Filter {
     belowLevel: number,
     aboveDegrees: number,
     belowDegrees: number,
-    onlyOnTerrain: WorldpainterApi[],
+    onlyOnTerrain: Terrain[],
     onlyOnLayer: LayerValue[]
   ) {
     super(id);

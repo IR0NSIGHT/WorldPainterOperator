@@ -1,5 +1,5 @@
 import { GeneralOperation } from "../Operation/Operation";
-import {WorldpainterApi, getTerrainById, getLayerById} from "../worldpainterApi/worldpainterApi";
+import {getTerrainById, getLayerById, Terrain} from "../worldpainterApi/worldpainterApi";
 import { log, logError } from "../log";
 import { configOperation, isValidConfigOperationBody } from "./ConfigOperation";
 import { parseLayerSetting, parseLayers } from "./ParseLayer";
@@ -33,8 +33,8 @@ export const mssgArr = (error: ParsingError): string[] => {
 
 export const parseTerrains = (
   terrain: number | number[],
-  getTerrainById: (id: number) => WorldpainterApi
-): WorldpainterApi[] | ParsingError => {
+  getTerrainById: (id: number) => Terrain
+): Terrain[] | ParsingError => {
   if (Array.isArray(terrain) && terrain.every((a) => typeof a === "number")) {
     return terrain.map((a) => getTerrainById(a));
   }

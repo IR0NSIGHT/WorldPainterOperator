@@ -1,7 +1,6 @@
-import {getLayerById, WorldpainterApi} from "../worldpainterApi/worldpainterApi";
+import {getLayerById, Terrain} from "../worldpainterApi/worldpainterApi";
 import {isParsingError, parseOperations, parseTerrains} from "./Parser";
 import {parseLayers} from "./ParseLayer";
-import {Layer} from "../Layer/Layer";
 import {GeneralOperation} from "../Operation/Operation";
 
 jest.mock('../log')
@@ -10,13 +9,13 @@ jest.mock('../worldpainterApi/worldpainterApi');
 
 describe("parse config", () => {
   test("parse multi entry terrain array", () => {
-    const myTerrain = (terrainName: string): WorldpainterApi => ({
+    const myTerrain = (terrainName: string): Terrain => ({
       getName() {
         return terrainName;
       },
     });
 
-    const getTerrainById = (id: number): WorldpainterApi => {
+    const getTerrainById = (id: number): Terrain => {
       return myTerrain(id.toString());
     };
 
@@ -26,13 +25,13 @@ describe("parse config", () => {
   });
 
   test("parse single entry terrain", () => {
-    const myTerrain = (terrainName: string): WorldpainterApi => ({
+    const myTerrain = (terrainName: string): Terrain => ({
       getName() {
         return terrainName;
       },
     });
 
-    const getTerrainById = (id: number): WorldpainterApi => {
+    const getTerrainById = (id: number): Terrain => {
       return myTerrain(id.toString());
     };
 

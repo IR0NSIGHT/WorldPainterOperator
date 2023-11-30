@@ -1,7 +1,7 @@
 import { Dimension } from "../Dimension";
 import { LayerSetting } from "../FileOperation/ParseLayer";
 import { FilterInterface } from "../Filter/FilterInterface";
-import { WorldpainterApi } from "../worldpainterApi/worldpainterApi";
+import { Terrain } from "../worldpainterApi/worldpainterApi";
 import { log } from "../log";
 
 const testOperationFilters = (
@@ -16,7 +16,7 @@ const testOperationFilters = (
 
 export type GeneralOperation = {
   name: string;
-  terrain: WorldpainterApi[];
+  terrain: Terrain[];
   layer: LayerSetting[];
   filter: FilterInterface[];
 };

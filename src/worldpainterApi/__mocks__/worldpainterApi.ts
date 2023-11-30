@@ -1,8 +1,8 @@
-import {WorldpainterApi} from "../worldpainterApi";
 import {Layer} from "../../Layer/Layer";
 import {ParsingError} from "../../FileOperation/Parser";
+import {Terrain} from "../worldpainterApi";
 
-export function getTerrainById(terrainId: number): WorldpainterApi {
+export function getTerrainById(terrainId: number): Terrain {
     // @ts-ignore worldpainter java object
     return { getName() { return "hello world"}}
 }
