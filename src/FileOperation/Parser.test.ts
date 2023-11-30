@@ -1,18 +1,18 @@
-import {getLayerById, Terrain} from "../worldpainterApi/worldpainterApi";
-import {isParsingError, parseOperations, parseTerrains} from "./Parser";
-import {parseLayers} from "./ParseLayer";
-import {GeneralOperation} from "../Operation/Operation";
+import { getLayerById, Terrain } from '../worldpainterApi/worldpainterApi';
+import { isParsingError, parseOperations, parseTerrains } from './Parser';
+import { parseLayers } from './ParseLayer';
+import { GeneralOperation } from '../Operation/Operation';
 
-jest.mock('../log')
+jest.mock('../log');
 
 jest.mock('../worldpainterApi/worldpainterApi');
 
-describe("parse config", () => {
-  test("parse multi entry terrain array", () => {
+describe('parse config', () => {
+  test('parse multi entry terrain array', () => {
     const myTerrain = (terrainName: string): Terrain => ({
       getName() {
         return terrainName;
-      },
+      }
     });
 
     const getTerrainById = (id: number): Terrain => {
@@ -24,11 +24,11 @@ describe("parse config", () => {
     expect(parsed).toHaveLength(6);
   });
 
-  test("parse single entry terrain", () => {
+  test('parse single entry terrain', () => {
     const myTerrain = (terrainName: string): Terrain => ({
       getName() {
         return terrainName;
-      },
+      }
     });
 
     const getTerrainById = (id: number): Terrain => {
@@ -40,19 +40,19 @@ describe("parse config", () => {
     expect(parsed).toHaveLength(1);
   });
 
-  test("parse single entry annotation", () => {
+  test('parse single entry annotation', () => {
     jest.mock('../log.ts', () => ({
-      log: jest.fn(),
+      log: jest.fn()
     }));
 
     const op = {
-      onlyOnLayer: ["Frost", 1]
+      onlyOnLayer: ['Frost', 1]
     };
 
     const l = parseLayers(op.onlyOnLayer, getLayerById);
     expect(isParsingError(l)).toBeFalsy();
 
-    const jsonString: string = `
+    const jsonString = `
     {
       "operations": [
         {
@@ -65,21 +65,18 @@ describe("parse config", () => {
         }
       ]
     }
-    `
+    `;
 
-    const parsedOp = parseOperations(jsonString)
+    const parsedOp = parseOperations(jsonString);
     expect(isParsingError(parsedOp)).toBeFalsy();
-    const opArr = (parsedOp as GeneralOperation[]);
-    expect(opArr).toHaveLength(1)
-    expect(opArr[0].filter).toHaveLength(1)
+    const opArr = parsedOp as GeneralOperation[];
+    expect(opArr).toHaveLength(1);
+    expect(opArr[0].filter).toHaveLength(1);
     //TODO change filter to be able to test what kind of filter is created here. abandon OOP
-
-
-
   });
 
-  test("invalid json input:  \"onlyOnLayer\": [\"Frost\"]", ()=> {
-    const jsonString: string = `
+  test('invalid json input:  "onlyOnLayer": ["Frost"]', () => {
+    const jsonString = `
     {
       "operations": [
         {
@@ -92,11 +89,13 @@ describe("parse config", () => {
         }
       ]
     }
-    `
-    expect(() => parseOperations(jsonString)).toThrow("logging error!can not parse layer(s): Frost")
-  })
+    `;
+    expect(() => parseOperations(jsonString)).toThrow(
+      'logging error!can not parse layer(s): Frost'
+    );
+  });
 
-  test("example config for onlyOnLayer",() =>{
+  test('example config for onlyOnLayer', () => {
     const jsonString = `
     {
     "operations": [
@@ -114,9 +113,8 @@ describe("parse config", () => {
     ]
 }
 
-    `
-    const parsedOp = parseOperations(jsonString)
+    `;
+    const parsedOp = parseOperations(jsonString);
     expect(isParsingError(parsedOp)).toBeFalsy();
-  })
-
+  });
 });

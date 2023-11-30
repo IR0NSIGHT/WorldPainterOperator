@@ -1,9 +1,9 @@
-import { Dimension } from "../Dimension";
-import { LayerValue, layerToJSON } from "../FileOperation/ParseLayer";
-import { Layer, isBitLayer } from "../Layer/Layer";
-import { Terrain } from "../worldpainterApi/worldpainterApi";
-import { log } from "../log";
-import { Comparator, FilterInterface } from "./FilterInterface";
+import { Dimension } from '../Dimension';
+import { LayerValue, layerToJSON } from '../FileOperation/ParseLayer';
+import { Layer, isBitLayer } from '../Layer/Layer';
+import { Terrain } from '../worldpainterApi/worldpainterApi';
+import { log } from '../log';
+import { Comparator, FilterInterface } from './FilterInterface';
 
 export class Filter implements FilterInterface {
   id: string;
@@ -11,8 +11,7 @@ export class Filter implements FilterInterface {
   private lastDecision = false;
   private inverted: InvertFilter | undefined = undefined;
   isInSelection(x: number, y: number, dimension: any): boolean {
-    if (x == this.lastPoint[0] && y == this.lastPoint[1])
-      return this.lastDecision;
+    if (x == this.lastPoint[0] && y == this.lastPoint[1]) return this.lastDecision;
     else {
       this.lastPoint = [x, y];
       this.lastDecision = this.test(x, y, dimension);
@@ -68,8 +67,7 @@ export class StandardFilter extends Filter {
 
   private isOnTerrain(terrain: Terrain) {
     return (
-      terrain != null &&
-      this.onlyOnTerrain.length == 0 ||
+      (terrain != null && this.onlyOnTerrain.length == 0) ||
       this.onlyOnTerrain.some((a) => a.getName() === terrain.getName())
     );
   }
@@ -101,16 +99,14 @@ export class StandardFilter extends Filter {
     this.aboveDegrees = aboveDegrees; //Math.tan(aboveLevel/57.3)
     this.belowDegrees = belowDegrees; //Math.tan(belowDegrees/57.3)
 
-    this.onlyOnScalarLayer = onlyOnLayer.filter(
-      (l) => !isBitLayer(l.layer.getDataSize())
-    );
+    this.onlyOnScalarLayer = onlyOnLayer.filter((l) => !isBitLayer(l.layer.getDataSize()));
     this.onlyOnBitLayer = onlyOnLayer
       .filter((l) => isBitLayer(l.layer.getDataSize()))
       .map((l) => l.layer);
     this.onlyOnTerrain = onlyOnTerrain;
 
     log(
-      "standard filter with onlyOnLayer: " +
+      'standard filter with onlyOnLayer: ' +
         JSON.stringify(this.onlyOnScalarLayer.map(layerToJSON)) +
         JSON.stringify(this.onlyOnBitLayer.map((a) => a.getName()))
     );
@@ -123,7 +119,7 @@ export class InvertFilter extends Filter {
     return !this.filter.isInSelection(x, y, dimension);
   }
   constructor(filter: FilterInterface) {
-    super("!" + filter.id);
+    super('!' + filter.id);
     this.filter = filter;
   }
   not() {
@@ -143,7 +139,7 @@ export class LayerFilter extends Filter {
    * @param comparator
    */
   constructor(layer: Layer, layerValue: number, comparator?: Comparator) {
-    super("layer_" + layer.getName());
+    super('layer_' + layer.getName());
     this.layer = layer;
     this.layerValue = layerValue;
     if (comparator === undefined) comparator = Comparator.EQUAL;
@@ -168,7 +164,7 @@ export class LayerFilter extends Filter {
         return dimension.getLayerValueAt(this.layer, x, y) >= this.layerValue;
 
       default:
-        throw new TypeError("invalid comparator");
+        throw new TypeError('invalid comparator');
     }
   }
 }

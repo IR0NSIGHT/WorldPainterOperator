@@ -10,5 +10,5 @@ export enum Comparator {
   GREATER,
   LESS,
   GREATER_EQUAL,
-  LESS_EQUAL,
+  LESS_EQUAL
 }

@@ -1,4 +1,4 @@
-import { configPerlin } from "./ParseFilter";
+import { configPerlin } from './ParseFilter';
 
 type configOperationHead = { name: string; layer: any; terrain: any };
 
@@ -27,5 +27,5 @@ export type layerConfigOperation = {
 } & configOperation;
 
 export const isValidConfigOperationBody = (op: any): boolean => {
-  return "name" in op && op.name != undefined && typeof op.name == "string";
+  return 'name' in op && op.name != undefined && typeof op.name == 'string';
 };

@@ -1,17 +1,11 @@
-import { Filter } from "./Filter";
+import { Filter } from './Filter';
 
 export class BlockFacingFilter extends Filter {
   north: boolean;
   south: boolean;
   east: boolean;
   west: boolean;
-  constructor(
-    id: string,
-    north: boolean,
-    south: boolean,
-    east: boolean,
-    west: boolean
-  ) {
+  constructor(id: string, north: boolean, south: boolean, east: boolean, west: boolean) {
     super(id);
     this.north = north;
     this.south = south;
@@ -26,6 +20,6 @@ export class BlockFacingFilter extends Filter {
     const faceSouth = !this.south || Math.floor(_dimension.getHeightAt(_x, _y - 1)) < ownZ;
     const faceEast = !this.east || Math.floor(_dimension.getHeightAt(_x + 1, _y)) < ownZ;
     const faceWest = !this.west || Math.floor(_dimension.getHeightAt(_x - 1, _y)) < ownZ;
-    return faceNorth &&  faceSouth && faceWest && faceEast;
+    return faceNorth && faceSouth && faceWest && faceEast;
   }
 }

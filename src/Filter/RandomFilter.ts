@@ -1,17 +1,15 @@
-import { parseNumber } from "../FileOperation/ParseNumber";
-import { ParsingError, isParsingError } from "../FileOperation/Parser";
-import { Filter } from "./Filter";
+import { parseNumber } from '../FileOperation/ParseNumber';
+import { ParsingError, isParsingError } from '../FileOperation/Parser';
+import { Filter } from './Filter';
 
-export const parseRandomFilter = (
-  chance: any
-): RandomFilter[] | ParsingError => {
+export const parseRandomFilter = (chance: any): RandomFilter[] | ParsingError => {
   if (chance == undefined) return [];
   const parsedChance = parseNumber(chance);
   if (isParsingError(parsedChance)) {
     return parsedChance;
   }
   if (parsedChance < 0 || parsedChance > 100)
-    return { mssg: "Chance must be between 0 and 100:" + parsedChance };
+    return { mssg: 'Chance must be between 0 and 100:' + parsedChance };
   return [new RandomFilter(parsedChance)];
 };
 
@@ -23,7 +21,7 @@ export class RandomFilter extends Filter {
   }
 
   constructor(chance: number) {
-    super("random_" + chance);
+    super('random_' + chance);
     this.chance = chance;
   }
 }
