@@ -67,10 +67,10 @@ export class StandardFilter extends Filter {
   }
 
   private isOnTerrain(terrain: Terrain) {
-    const terrainName = terrain.getName();
     return (
+      terrain != null &&
       this.onlyOnTerrain.length == 0 ||
-      this.onlyOnTerrain.some((a) => a.getName() === terrainName)
+      this.onlyOnTerrain.some((a) => a.getName() === terrain.getName())
     );
   }
 
