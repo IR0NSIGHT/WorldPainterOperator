@@ -1,16 +1,13 @@
-import { isParsingError } from "../Parser";
+import { isParsingError } from '../Parser';
 import {
   DirectionalSlopeFilter,
   parseDirectionalSlopeFilter,
-  smallestAngle,
-} from "./DirectionalSlopeFilter";
-import {
-  DirectionSetting,
-  parseDirectionSetting,
-} from "./ParseDirectionalSlope";
+  smallestAngle
+} from './DirectionalSlopeFilter';
+import { DirectionSetting, parseDirectionSetting } from './ParseDirectionalSlope';
 
-describe("parse directional slope settings from config", () => {
-  test("parse single setting", () => {
+describe('parse directional slope settings from config', () => {
+  test('parse single setting', () => {
     const data: any = { slopeDir: { dir: 0, maxOffset: 90 } };
 
     const parsed = parseDirectionSetting(data.slopeDir);
@@ -22,7 +19,7 @@ describe("parse directional slope settings from config", () => {
     expect(filter.maxOffset).toEqual(90);
   });
 
-  test("parse single setting as array", () => {
+  test('parse single setting as array', () => {
     const data: any = { slopeDir: [{ dir: 0, maxOffset: 90 }] };
 
     const parsed = parseDirectionSetting(data.slopeDir);
@@ -34,13 +31,13 @@ describe("parse directional slope settings from config", () => {
     expect(filter.maxOffset).toEqual(90);
   });
 
-  test("parse multiple setting as array", () => {
+  test('parse multiple setting as array', () => {
     const data: any = {
       slopeDir: [
         { dir: 0, maxOffset: 90 },
         { dir: -1, maxOffset: 75 },
-        { dir: 3, maxOffset: 180 },
-      ],
+        { dir: 3, maxOffset: 180 }
+      ]
     };
 
     const parsed = parseDirectionSetting(data.slopeDir);
@@ -62,8 +59,8 @@ describe("parse directional slope settings from config", () => {
   });
 });
 
-describe("parse dir slope filter from config", () => {
-  test("parse single filter", () => {
+describe('parse dir slope filter from config', () => {
+  test('parse single filter', () => {
     const data: any = { slopeDir: { dir: 0, maxOffset: 90 } };
 
     const parsed = parseDirectionalSlopeFilter(data.slopeDir);
@@ -75,7 +72,7 @@ describe("parse dir slope filter from config", () => {
     expect(filter.offset).toEqual(90);
   });
 
-  test("parse single filter as array", () => {
+  test('parse single filter as array', () => {
     const data: any = { slopeDir: [{ dir: 0, maxOffset: 90 }] };
 
     const parsed = parseDirectionalSlopeFilter(data.slopeDir);
@@ -88,8 +85,8 @@ describe("parse dir slope filter from config", () => {
   });
 });
 
-describe("smallest angle", () => {
-  test("neg = pos offset", () => {
+describe('smallest angle', () => {
+  test('neg = pos offset', () => {
     const dir = 0;
     const off = 15;
     expect(smallestAngle(dir, dir + off)).toEqual(off);

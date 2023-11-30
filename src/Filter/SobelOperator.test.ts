@@ -1,17 +1,17 @@
-import { Dimension } from "../Dimension";
-import { sobel } from "./SobelOperator";
+import { Dimension } from '../Dimension';
+import { sobel } from './SobelOperator';
 
-describe("test sobel operator", () => {
-  test("simple sobel x", () => {
+describe('test sobel operator', () => {
+  test('simple sobel x', () => {
     const data = [
       [1, 2, 3],
       [1, 2, 3],
-      [1, 2, 3],
+      [1, 2, 3]
     ];
     const dim: Dimension = {
       getHeightAt(x: number, y: number): number {
         return data[y][x];
-      },
+      }
     } as Dimension;
 
     expect(dim.getHeightAt(0, 0)).toEqual(1);
@@ -21,16 +21,16 @@ describe("test sobel operator", () => {
     expect(sobel(1, 1, dim)).toEqual({ x: -8 / 9, y: 0 });
   });
 
-  test("simple sobel y", () => {
+  test('simple sobel y', () => {
     const data = [
       [1, 1, 1],
       [2, 2, 2],
-      [3, 3, 3],
+      [3, 3, 3]
     ];
     const dim: Dimension = {
       getHeightAt(x: number, y: number): number {
         return data[y][x];
-      },
+      }
     } as Dimension;
 
     expect(dim.getHeightAt(0, 0)).toEqual(1);
@@ -40,16 +40,16 @@ describe("test sobel operator", () => {
     expect(sobel(1, 1, dim)).toEqual({ x: 0, y: 8 / 9 });
   });
 
-  test("flat sobel x,y", () => {
+  test('flat sobel x,y', () => {
     const data = [
       [2, 2, 2],
       [2, -1000, 2],
-      [2, 2, 2],
+      [2, 2, 2]
     ];
     const dim: Dimension = {
       getHeightAt(x: number, y: number): number {
         return data[y][x];
-      },
+      }
     } as Dimension;
 
     expect(sobel(1, 1, dim)).toEqual({ x: 0, y: 0 });

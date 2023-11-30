@@ -11,6 +11,6 @@ export const timer = () => {
     },
     stop: () => {
       return getTime() - t;
-    },
+    }
   };
 };

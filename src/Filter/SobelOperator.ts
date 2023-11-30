@@ -1,17 +1,14 @@
-import { Dimension } from "../Dimension";
+import { Dimension } from '../Dimension';
 
 /**
  *
  * @param sobel
  * @returns slope in ?? and dir in degree
  */
-export const sobelToSlope = (sobel: {
-  x: number;
-  y: number;
-}): { slope: number; dir: number } => {
+export const sobelToSlope = (sobel: { x: number; y: number }): { slope: number; dir: number } => {
   return {
     slope: Math.sqrt(sobel.x * sobel.x + sobel.y * sobel.y),
-    dir: (Math.atan2(sobel.x, sobel.y) * 180) / Math.PI,
+    dir: (Math.atan2(sobel.x, sobel.y) * 180) / Math.PI
   };
 };
 
@@ -23,11 +20,7 @@ export const directedSlope = (
   return sobelToSlope(sobel(x, y, _dimension));
 };
 
-export const sobel = (
-  x: number,
-  y: number,
-  _dimension: Dimension
-): { x: number; y: number } => {
+export const sobel = (x: number, y: number, _dimension: Dimension): { x: number; y: number } => {
   const gradient = { x: 0, y: 0 };
   const zVal = (x: number, y: number) => _dimension.getHeightAt(x, y);
   gradient.x += zVal(x - 1, y - 1) - zVal(x + 1, y - 1);

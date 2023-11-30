@@ -1,7 +1,7 @@
-import { parseDirectionSetting } from "./ParseDirectionalSlope";
-import { ParsingError, isParsingError } from "../Parser";
-import { Filter } from "../../Filter/Filter";
-import { directedSlope } from "../../Filter/SobelOperator";
+import { parseDirectionSetting } from './ParseDirectionalSlope';
+import { ParsingError, isParsingError } from '../Parser';
+import { Filter } from '../../Filter/Filter';
+import { directedSlope } from '../../Filter/SobelOperator';
 
 export const mod = (a: number, mod: number): number => {
   return ((a % mod) + mod) % mod;
@@ -19,7 +19,7 @@ export const parseDirectionalSlopeFilter = (
     return parsedDirections;
   }
   const filters = parsedDirections.map(
-    (s) => new DirectionalSlopeFilter("dirSlope", s.dir, s.maxOffset)
+    (s) => new DirectionalSlopeFilter('dirSlope', s.dir, s.maxOffset)
   );
   return filters;
 };

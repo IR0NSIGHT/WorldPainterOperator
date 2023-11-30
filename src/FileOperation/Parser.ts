@@ -1,26 +1,25 @@
-import { GeneralOperation } from "../Operation/Operation";
-import {WorldpainterApi, getTerrainById, getLayerById} from "../worldpainterApi/worldpainterApi";
-import { log, logError } from "../log";
-import { configOperation, isValidConfigOperationBody } from "./ConfigOperation";
-import { parseLayerSetting, parseLayers } from "./ParseLayer";
-import { FilterInterface } from "../Filter/FilterInterface";
-import { parsePerlin } from "./ParseFilter";
-import { StandardFilter } from "../Filter/Filter";
-import { PerlinFilter } from "../Filter/PerlinFilter";
-import { parseFacing } from "./ParseFacing";
-import { BlockFacingFilter } from "../Filter/BlockFacingFilter";
-import { parseDirectionalSlopeFilter } from "./DirectedSlope/DirectionalSlopeFilter";
-import { parseRandomFilter } from "../Filter/RandomFilter";
-import { safeParseNumber } from "./ParseNumber";
+import { GeneralOperation } from '../Operation/Operation';
+import { getTerrainById, getLayerById, Terrain } from '../worldpainterApi/worldpainterApi';
+import { log, logError } from '../log';
+import { configOperation, isValidConfigOperationBody } from './ConfigOperation';
+import { parseLayerSetting, parseLayers } from './ParseLayer';
+import { FilterInterface } from '../Filter/FilterInterface';
+import { parsePerlin } from './ParseFilter';
+import { StandardFilter } from '../Filter/Filter';
+import { PerlinFilter } from '../Filter/PerlinFilter';
+import { parseFacing } from './ParseFacing';
+import { BlockFacingFilter } from '../Filter/BlockFacingFilter';
+import { parseDirectionalSlopeFilter } from './DirectedSlope/DirectionalSlopeFilter';
+import { parseRandomFilter } from '../Filter/RandomFilter';
+import { safeParseNumber } from './ParseNumber';
 
 export type ParsingError = { mssg: string | string[] };
 export function isParsingError(error: any): error is ParsingError {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error.mssg != undefined &&
-    (typeof error.mssg === "string" ||
-      (Array.isArray(error.mssg) &&
-        error.mssg.every((a: any) => typeof a == "string")))
+    (typeof error.mssg === 'string' ||
+      (Array.isArray(error.mssg) && error.mssg.every((a: any) => typeof a == 'string')))
   );
 }
 
@@ -33,15 +32,15 @@ export const mssgArr = (error: ParsingError): string[] => {
 
 export const parseTerrains = (
   terrain: number | number[],
-  getTerrainById: (id: number) => WorldpainterApi
-): WorldpainterApi[] | ParsingError => {
-  if (Array.isArray(terrain) && terrain.every((a) => typeof a === "number")) {
+  getTerrainById: (id: number) => Terrain
+): Terrain[] | ParsingError => {
+  if (Array.isArray(terrain) && terrain.every((a) => typeof a === 'number')) {
     return terrain.map((a) => getTerrainById(a));
   }
-  if (typeof terrain === "number") return [getTerrainById(terrain)];
+  if (typeof terrain === 'number') return [getTerrainById(terrain)];
   if (terrain === undefined) return [];
   else {
-    return { mssg: "could not parse terrain: " + terrain };
+    return { mssg: 'could not parse terrain: ' + terrain };
   }
 };
 
@@ -55,25 +54,23 @@ function loadConfig(filePath: string): string | ParsingError {
     // @ts-ignore java object
     bytes = java.nio.file.Files.readAllBytes(path);
   } catch (e) {
-    return { mssg: "Could not find or load file from:" + filePath };
+    return { mssg: 'Could not find or load file from:' + filePath };
   }
 
   try {
     // @ts-ignore java object
     let jsonString: string = new java.lang.String(bytes);
-    jsonString = jsonString.replace(/ *\([^)]*\) */g, ""); //remove "(a comment)" //TODO json with comments format
-    return jsonString
+    jsonString = jsonString.replace(/ *\([^)]*\) */g, ''); //remove "(a comment)" //TODO json with comments format
+    return jsonString;
   } catch (e) {
     return {
-      mssg: "could not parse JSON object from config file, please check JSON syntax",
+      mssg: 'could not parse JSON object from config file, please check JSON syntax'
     };
   }
 }
 
-export const parseFullOperation = (
-  op: configOperation
-): GeneralOperation | ParsingError => {
-  log("parse operation: " + op.name);
+export const parseFullOperation = (op: configOperation): GeneralOperation | ParsingError => {
+  log('parse operation: ' + op.name);
   const layers = parseLayerSetting(op.layer, getLayerById);
   const terrains = parseTerrains(op.terrain, getTerrainById);
   const perlin = parsePerlin(op.perlin);
@@ -85,16 +82,7 @@ export const parseFullOperation = (
 
   const errors: string[] = [];
   //print all parsing errors
-  [
-    layers,
-    terrains,
-    perlin,
-    onlyOnTerrains,
-    onlyOnLayer,
-    blockFacing,
-    directedSlopeFilters,
-    random,
-  ]
+  [layers, terrains, perlin, onlyOnTerrains, onlyOnLayer, blockFacing, directedSlopeFilters, random]
     .filter(isParsingError)
     .forEach((a) => mssgArr(a).forEach((m) => errors.push(m)));
 
@@ -114,13 +102,13 @@ export const parseFullOperation = (
   }
 
   if (layers.length == 0 && terrains.length == 0) {
-    return { mssg: "skip operation with no effect: " + op.name };
+    return { mssg: 'skip operation with no effect: ' + op.name };
   }
 
   const opFilters = [];
 
   const basicFilter: FilterInterface = new StandardFilter(
-    "Standard",
+    'Standard',
     safeParseNumber(op.aboveLevel),
     safeParseNumber(op.belowLevel),
     safeParseNumber(op.aboveDegrees),
@@ -141,14 +129,9 @@ export const parseFullOperation = (
     opFilters.push(perlinFilter);
   }
 
-  if (
-    blockFacing.east ||
-    blockFacing.west ||
-    blockFacing.north ||
-    blockFacing.south
-  ) {
+  if (blockFacing.east || blockFacing.west || blockFacing.north || blockFacing.south) {
     const facingFilter = new BlockFacingFilter(
-      "BlockFacing",
+      'BlockFacing',
       blockFacing.north,
       blockFacing.south,
       blockFacing.east,
@@ -164,12 +147,12 @@ export const parseFullOperation = (
     name: op.name,
     terrain: terrains,
     layer: layers,
-    filter: opFilters,
+    filter: opFilters
   };
   return operation;
 };
 
-export function parseOperations(operationJson: string):   GeneralOperation[] | ParsingError {
+export function parseOperations(operationJson: string): GeneralOperation[] | ParsingError {
   const config: config = JSON.parse(operationJson);
 
   const allOperations: GeneralOperation[] = [];
@@ -178,18 +161,18 @@ export function parseOperations(operationJson: string):   GeneralOperation[] | P
   const hasConfigBody = hasOpKey && isArr;
   if (!hasConfigBody) {
     return {
-      mssg: "Config is missing/has wrong config body: \n{ 'operations': [ ...my operations... ] }",
+      mssg: "Config is missing/has wrong config body: \n{ 'operations': [ ...my operations... ] }"
     };
   }
-  log("config has valid body");
+  log('config has valid body');
 
   if (!config.operations.every(isValidConfigOperationBody)) {
     const invalidOps = config.operations
-        .filter((a: any) => !isValidConfigOperationBody(a))
-        .map((a) => "op_name: " + a.name + "\n op_string:" + JSON.stringify(a));
+      .filter((a: any) => !isValidConfigOperationBody(a))
+      .map((a) => 'op_name: ' + a.name + '\n op_string:' + JSON.stringify(a));
 
     return {
-      mssg: "some operations have invalid bodies: " + invalidOps,
+      mssg: 'some operations have invalid bodies: ' + invalidOps
     };
   }
   const configOperations: configOperation[] = config.operations;
@@ -204,21 +187,17 @@ export function parseOperations(operationJson: string):   GeneralOperation[] | P
     allOperations.push(operation);
   }
   if (allOperations.length == 0) {
-    return { mssg: "Abort because no valid operations were read." };
+    return { mssg: 'Abort because no valid operations were read.' };
   }
   return allOperations;
 }
-export function parseJsonFromFile(
-  filePath: string
-): GeneralOperation[] | ParsingError {
-
-
+export function parseJsonFromFile(filePath: string): GeneralOperation[] | ParsingError {
   const loadedConfigString = loadConfig(filePath);
   if (isParsingError(loadedConfigString)) {
     logError(loadedConfigString);
     return [];
   }
-  log("config has valid JSON format.");
+  log('config has valid JSON format.');
 
-  return parseOperations(loadedConfigString)
+  return parseOperations(loadedConfigString);
 }
