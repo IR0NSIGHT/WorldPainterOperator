@@ -1,6 +1,6 @@
 {
   "name": "worldpainteroperator",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "run chains of complex, global operations in WorldPainter from a config file.",
   "main": "dist/AdvancedOperator/AdvancedOperator.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "zip": "ls -R &&  zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator",
     "insertHeader": "bash ./shellscripts/insertHeader.sh",
     "lint": "eslint ./src --fix --config .eslintrc.json",
-    "lint:style:fix" : "prettier --config .prettierrc **.ts --write",
+    "lint:style:fix": "prettier --config .prettierrc **.ts --write",
     "test": "jest ./src --verbose"
   },
   "repository": {
