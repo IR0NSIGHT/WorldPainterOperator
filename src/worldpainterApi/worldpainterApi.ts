@@ -1,5 +1,6 @@
 import { ParsingError } from '../FileOperation/Parser';
 import { Layer } from '../Layer/Layer';
+import { log } from "../log";
 
 export function getTerrainById(terrainId: number): Terrain {
   // @ts-ignore worldpainter java object
@@ -52,6 +53,8 @@ export function getLayerById(layerId: string): Layer | ParsingError {
     default: {
       //search for custom layers
       const customLayers: Layer[] = dimension.getCustomLayers();
+      if (!Array.isArray(customLayers))
+        return { mssg: 'no custom layers found in project: ' + layerId };
       let matched: Layer | undefined = undefined;
       customLayers
         .filter((f) => f != null)
