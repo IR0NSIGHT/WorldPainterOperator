@@ -4,7 +4,10 @@ module.exports = {
   entry: "./compiled/index.js",
 
   mode: "development",
-
+  optimization: {
+    minimize: false,
+    minimizer: [],
+  },
   output: {
     filename: "AdvancedOperator.js",
     path: path.resolve(__dirname, "dist/AdvancedOperator"),
