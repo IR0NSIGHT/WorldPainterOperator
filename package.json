@@ -9,6 +9,7 @@
     "create-directory": "node -e \"const mkdirp = require('mkdirp'); mkdirp.sync('./dist/AdvancedOperator/configs');\"",
     "bundle": "webpack --mode production",
     "build": "rm -rf dist && npm run compile && npm run bundle && npm run insertHeader",
+    "pack": "webpack --config webpack.config.js && npm run insertHeader",
     "deploy": "npm run build && npm run copyDocu",
     "zip": "ls -R &&  zip -r ./dist/AdvancedOperator.zip ./dist/AdvancedOperator",
     "insertHeader": "bash ./shellscripts/insertHeader.sh",
@@ -44,9 +45,10 @@
     "jest": "^29.5.0",
     "mkdirp": "^3.0.1",
     "ts-jest": "^29.1.0",
+    "ts-loader": "^9.5.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4",
-    "webpack": "^5.80.0",
-    "webpack-cli": "^5.0.2"
+    "typescript": "^5.3.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   }
 }
