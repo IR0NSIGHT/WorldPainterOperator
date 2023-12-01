@@ -12,6 +12,18 @@ export interface Terrain {
   getName(): string;
 }
 
+
+const allLayers =(): Layer[] => {
+  const javaIterator = dimension.getAllLayers(false).iterator();
+  const myArr = [];
+  while (javaIterator.hasNext()) {
+      // Assuming the Java objects have a 'name' property, adapt this to your actual Java class structure
+      const javaLayer = javaIterator.next();
+      myArr.push(javaLayer);
+  }
+  return myArr;
+}
+
 export function getLayerById(layerId: string): Layer | ParsingError {
   switch (layerId) {
     case 'Frost': // @ts-ignore wp object
@@ -52,20 +64,25 @@ export function getLayerById(layerId: string): Layer | ParsingError {
 
     default: {
       //search for custom layers
-      const customLayers: Layer[] = dimension.getCustomLayers();
-      if (!Array.isArray(customLayers))
-        return { mssg: 'no custom layers found in project: ' + layerId };
+      //@ts-ignore overload exists, but isnt documented in dimension typestub.
+      const customLayers: Layer[] = allLayers()
+
       let matched: Layer | undefined = undefined;
-      customLayers
+      try {
+        customLayers
         .filter((f) => f != null)
         .forEach(function (element) {
           if (layerId == element.getName()) {
             matched = element;
           }
         });
+      } catch (error) {
+        //ignore, handled below
+        return { mssg: 'could not find custom layer with name: ' + layerId + "\navailable custom layers:\n" + customLayers + "\nerror:" + error};
+      }
 
       if (matched == undefined || matched == null) {
-        return { mssg: 'could not find custom layer with name: ' + layerId };
+        return { mssg: 'could not find custom layer with name: ' + layerId + "\navailable custom layers:\n" + customLayers.map(l => l.getName()) };
       }
       return matched;
     }
