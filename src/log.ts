@@ -22,7 +22,7 @@ export const logToFile = (mssg: string) => {
 export const logError = (error: ParsingError): void => {
   var string = "";
   if (Array.isArray(error.mssg)) {
-    error.mssg.forEach((a) => string += 'ERROR: ' + a);
+    error.mssg.forEach((a) => string += '\nERROR: ' + a);
   } else {
     string += 'ERROR: ' + error.mssg;
   }

@@ -64,27 +64,20 @@ export function getLayerById(layerId: string): Layer | ParsingError {
 
     default: {
       //search for custom layers
-      //@ts-ignore overload exists, but isnt documented in dimension typestub.
-      const customLayers: Layer[] = allLayers()
-
-      let matched: Layer | undefined = undefined;
       try {
-        customLayers
+        const customLayers: Layer[] = allLayers()
+        const matches = customLayers
         .filter((f) => f != null)
-        .forEach(function (element) {
-          if (layerId == element.getName()) {
-            matched = element;
-          }
-        });
+        .filter(layer => layer.getName() == layerId)
+
+        if (matches.length != 0)
+          return matches[0]
+        else
+          return { mssg: "custom layer " + layerId + " did not match any known layers"}
       } catch (error) {
         //ignore, handled below
-        return { mssg: 'could not find custom layer with name: ' + layerId + "\navailable custom layers:\n" + customLayers + "\nerror:" + error};
+        return { mssg: 'could not find custom layer with name: ' + layerId + "\navailable custom layers:\n" + allLayers() + "\nerror:" + error};
       }
-
-      if (matched == undefined || matched == null) {
-        return { mssg: 'could not find custom layer with name: ' + layerId + "\navailable custom layers:\n" + customLayers.map(l => l.getName()) };
-      }
-      return matched;
     }
   }
 }

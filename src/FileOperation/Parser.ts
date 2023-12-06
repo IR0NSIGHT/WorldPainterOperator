@@ -86,7 +86,7 @@ export const parseFullOperation = (op: configOperation): GeneralOperation | Pars
         ]
 
 
-        return {mssg: ["Failed to parse operation" + JSON.stringify(op, null, 3), ...errors, ...errorlist]};
+        return {mssg: ["Failed to parse operation" + JSON.stringify(op, null, 3), "errors from parsing: ", ...errors, "all errors: ",...errorlist]};
     }
 
     if (layers.length == 0 && terrains.length == 0) {
