@@ -1,6 +1,6 @@
 import { ParsingError } from '../FileOperation/Parser';
 import { Layer } from '../Layer/Layer';
-import { log } from "../log";
+import { logToConsole } from "../log";
 
 export function getTerrainById(terrainId: number): Terrain {
   // @ts-ignore worldpainter java object

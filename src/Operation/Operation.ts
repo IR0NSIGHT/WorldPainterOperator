@@ -2,7 +2,7 @@ import { Dimension } from '../Dimension';
 import { LayerSetting } from '../FileOperation/ParseLayer';
 import { FilterInterface } from '../Filter/FilterInterface';
 import { Terrain } from '../worldpainterApi/worldpainterApi';
-import { log } from '../log';
+import {logAll, logToConsole, logToFile} from '../log';
 
 const testOperationFilters = (
   x: number,
@@ -58,13 +58,7 @@ export function sample<Type>(arr: Type[]): Type {
 }
 
 export function executeOperations(ops: GeneralOperation[], dimension: Dimension) {
-  for (const op of ops) {
-    log(op.name);
-    if (op.filter.length != 0) log('\tFilter\t' + op.filter.map((f) => f.id));
-
-    if (op.terrain.length != 0) log('\tWorldpainterApi\t' + op.terrain.map((a) => a.getName()));
-    if (op.layer.length != 0) log('\tLayer\t' + op.layer.map((a) => [a.layer.getName(), a.value]));
-  }
+  logToFile("Operations:"+ JSON.stringify(ops,null,3))
 
   const startX: number = dimension.getLowestX();
   const startY: number = dimension.getLowestY();
@@ -72,7 +66,7 @@ export function executeOperations(ops: GeneralOperation[], dimension: Dimension)
   const endY: number = startY + dimension.getHeight();
 
   const notifyerStep = Math.floor((endX - startX) / 15);
-  log('start: ' + [startX, startY] + ' end: ' + [endX, endY]);
+  logAll('start: ' + [startX, startY] + ' end: ' + [endX, endY]);
   for (let chunkX = startX; chunkX < endX; chunkX++) {
     for (let chunkY = startY; chunkY < endY; chunkY++) {
       const chunk = { x: chunkX, y: chunkY };
@@ -90,9 +84,9 @@ export function executeOperations(ops: GeneralOperation[], dimension: Dimension)
       }
     }
     if (chunkX % notifyerStep == 0) {
-      log('' + Math.round(((chunkX - startX) / (endX - startX)) * 100) + '%');
+      logAll('' + Math.round(((chunkX - startX) / (endX - startX)) * 100) + '%');
     }
   }
-  log('100%');
-  log('done');
+  logAll('100%');
+  logAll('done');
 }

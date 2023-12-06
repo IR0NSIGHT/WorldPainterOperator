@@ -2,7 +2,7 @@ import { Dimension } from '../Dimension';
 import { LayerValue, layerToJSON } from '../FileOperation/ParseLayer';
 import { Layer, isBitLayer } from '../Layer/Layer';
 import { Terrain } from '../worldpainterApi/worldpainterApi';
-import { log } from '../log';
+import { logToConsole } from '../log';
 import { Comparator, FilterInterface } from './FilterInterface';
 
 export class Filter implements FilterInterface {
@@ -104,12 +104,6 @@ export class StandardFilter extends Filter {
       .filter((l) => isBitLayer(l.layer.getDataSize()))
       .map((l) => l.layer);
     this.onlyOnTerrain = onlyOnTerrain;
-
-    log(
-      'standard filter with onlyOnLayer: ' +
-        JSON.stringify(this.onlyOnScalarLayer.map(layerToJSON)) +
-        JSON.stringify(this.onlyOnBitLayer.map((a) => a.getName()))
-    );
   }
 }
 

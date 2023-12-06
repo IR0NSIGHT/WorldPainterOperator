@@ -1,58 +1,58 @@
-import { getLayerById, Terrain } from '../worldpainterApi/worldpainterApi';
-import { isParsingError, parseOperations, parseTerrains } from './Parser';
-import { parseLayers } from './ParseLayer';
-import { GeneralOperation } from '../Operation/Operation';
+import {getLayerById, Terrain} from '../worldpainterApi/worldpainterApi';
+import {isParsingError, parseOperations, parseTerrains, ParsingError} from './Parser';
+import {parseLayers} from './ParseLayer';
+import {GeneralOperation} from '../Operation/Operation';
 
 jest.mock('../log');
 
 jest.mock('../worldpainterApi/worldpainterApi');
 
 describe('parse config', () => {
-  test('parse multi entry terrain array', () => {
-    const myTerrain = (terrainName: string): Terrain => ({
-      getName() {
-        return terrainName;
-      }
+    test('parse multi entry terrain array', () => {
+        const myTerrain = (terrainName: string): Terrain => ({
+            getName() {
+                return terrainName;
+            }
+        });
+
+        const getTerrainById = (id: number): Terrain => {
+            return myTerrain(id.toString());
+        };
+
+        const parsed = parseTerrains([0, 1, 2, 0, 1, 2], getTerrainById);
+
+        expect(parsed).toHaveLength(6);
     });
 
-    const getTerrainById = (id: number): Terrain => {
-      return myTerrain(id.toString());
-    };
+    test('parse single entry terrain', () => {
+        const myTerrain = (terrainName: string): Terrain => ({
+            getName() {
+                return terrainName;
+            }
+        });
 
-    const parsed = parseTerrains([0, 1, 2, 0, 1, 2], getTerrainById);
+        const getTerrainById = (id: number): Terrain => {
+            return myTerrain(id.toString());
+        };
 
-    expect(parsed).toHaveLength(6);
-  });
+        const parsed = parseTerrains(1, getTerrainById);
 
-  test('parse single entry terrain', () => {
-    const myTerrain = (terrainName: string): Terrain => ({
-      getName() {
-        return terrainName;
-      }
+        expect(parsed).toHaveLength(1);
     });
 
-    const getTerrainById = (id: number): Terrain => {
-      return myTerrain(id.toString());
-    };
+    test('parse single entry annotation', () => {
+        jest.mock('../log.ts', () => ({
+            log: jest.fn()
+        }));
 
-    const parsed = parseTerrains(1, getTerrainById);
+        const op = {
+            onlyOnLayer: ['Frost', 1]
+        };
 
-    expect(parsed).toHaveLength(1);
-  });
+        const l = parseLayers(op.onlyOnLayer, getLayerById);
+        expect(isParsingError(l)).toBeFalsy();
 
-  test('parse single entry annotation', () => {
-    jest.mock('../log.ts', () => ({
-      log: jest.fn()
-    }));
-
-    const op = {
-      onlyOnLayer: ['Frost', 1]
-    };
-
-    const l = parseLayers(op.onlyOnLayer, getLayerById);
-    expect(isParsingError(l)).toBeFalsy();
-
-    const jsonString = `
+        const jsonString = `
     {
       "operations": [
         {
@@ -67,36 +67,37 @@ describe('parse config', () => {
     }
     `;
 
-    const parsedOp = parseOperations(jsonString);
-    expect(isParsingError(parsedOp)).toBeFalsy();
-    const opArr = parsedOp as GeneralOperation[];
-    expect(opArr).toHaveLength(1);
-    expect(opArr[0].filter).toHaveLength(1);
-    //TODO change filter to be able to test what kind of filter is created here. abandon OOP
-  });
+        const parsedOp = parseOperations(jsonString);
+        expect(isParsingError(parsedOp)).toBeFalsy();
+        const opArr = parsedOp as GeneralOperation[];
+        expect(opArr).toHaveLength(1);
+        expect(opArr[0].filter).toHaveLength(1);
+        //TODO change filter to be able to test what kind of filter is created here. abandon OOP
+    });
 
-  test('invalid json input:  "onlyOnLayer": ["Frost"]', () => {
-    const jsonString = `
-    {
-      "operations": [
+    test('invalid json input:  "onlyOnLayer": ["Frost"]', () => {
+        const jsonString = `
         {
-          "name": "Grass 1",
-          "terrain": [0],
-          "aboveLevel": -64,
-          "belowLevel": 200,
-          "aboveDegrees": 0,
-          "onlyOnLayer": ["Frost"]
+          "operations": [
+            {
+              "name": "Grass 1",
+              "terrain": [0],
+              "aboveLevel": -64,
+              "belowLevel": 200,
+              "aboveDegrees": 0,
+              "onlyOnLayer": ["Frost"]
+            }
+          ]
         }
-      ]
-    }
-    `;
-    expect(() => parseOperations(jsonString)).toThrow(
-      'logging error!can not parse layer(s): Frost'
-    );
-  });
+        `;
 
-  test('example config for onlyOnLayer', () => {
-    const jsonString = `
+        const parsed = parseOperations(jsonString)
+        expect(isParsingError(parsed)).toBeTruthy()
+        expect((parsed as ParsingError).mssg[0]).toContain("Frost")
+    });
+
+    test('example config for onlyOnLayer', () => {
+        const jsonString = `
     {
     "operations": [
         {
@@ -114,7 +115,7 @@ describe('parse config', () => {
 }
 
     `;
-    const parsedOp = parseOperations(jsonString);
-    expect(isParsingError(parsedOp)).toBeFalsy();
-  });
+        const parsedOp = parseOperations(jsonString);
+        expect(isParsingError(parsedOp)).toBeFalsy();
+    });
 });

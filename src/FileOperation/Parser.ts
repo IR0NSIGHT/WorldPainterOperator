@@ -1,17 +1,17 @@
-import { GeneralOperation } from '../Operation/Operation';
-import { getTerrainById, getLayerById, Terrain } from '../worldpainterApi/worldpainterApi';
-import { log, logError } from '../log';
-import { configOperation, isValidConfigOperationBody } from './ConfigOperation';
-import { parseLayerSetting, parseLayers } from './ParseLayer';
-import { FilterInterface } from '../Filter/FilterInterface';
-import { parsePerlin } from './ParseFilter';
-import { StandardFilter } from '../Filter/Filter';
-import { PerlinFilter } from '../Filter/PerlinFilter';
-import { parseFacing } from './ParseFacing';
-import { BlockFacingFilter } from '../Filter/BlockFacingFilter';
-import { parseDirectionalSlopeFilter } from './DirectedSlope/DirectionalSlopeFilter';
-import { parseRandomFilter } from '../Filter/RandomFilter';
-import { safeParseNumber } from './ParseNumber';
+import {GeneralOperation} from '../Operation/Operation';
+import {getLayerById, getTerrainById, Terrain} from '../worldpainterApi/worldpainterApi';
+import {configOperation, isValidConfigOperationBody} from './ConfigOperation';
+import {parseLayers, parseLayerSetting} from './ParseLayer';
+import {FilterInterface} from '../Filter/FilterInterface';
+import {parsePerlin} from './ParseFilter';
+import {StandardFilter} from '../Filter/Filter';
+import {PerlinFilter} from '../Filter/PerlinFilter';
+import {parseFacing} from './ParseFacing';
+import {BlockFacingFilter} from '../Filter/BlockFacingFilter';
+import {parseDirectionalSlopeFilter} from './DirectedSlope/DirectionalSlopeFilter';
+import {parseRandomFilter} from '../Filter/RandomFilter';
+import {safeParseNumber} from './ParseNumber';
+import {loadConfig} from "./FileIO";
 
 export type ParsingError = { mssg: string | string[] };
 export function isParsingError(error: any): error is ParsingError {
@@ -46,31 +46,7 @@ export const parseTerrains = (
 
 type config = { operations: configOperation[] };
 
-function loadConfig(filePath: string): string | ParsingError {
-  let bytes;
-  try {
-    // @ts-ignore java object
-    const path = java.nio.file.Paths.get(filePath);
-    // @ts-ignore java object
-    bytes = java.nio.file.Files.readAllBytes(path);
-  } catch (e) {
-    return { mssg: 'Could not find or load file from:' + filePath };
-  }
-
-  try {
-    // @ts-ignore java object
-    let jsonString: string = new java.lang.String(bytes);
-    jsonString = jsonString.replace(/ *\([^)]*\) */g, ''); //remove "(a comment)" //TODO json with comments format
-    return jsonString;
-  } catch (e) {
-    return {
-      mssg: 'could not parse JSON object from config file, please check JSON syntax'
-    };
-  }
-}
-
 export const parseFullOperation = (op: configOperation): GeneralOperation | ParsingError => {
-  log('parse operation: ' + op.name);
   const layers = parseLayerSetting(op.layer, getLayerById);
   const terrains = parseTerrains(op.terrain, getTerrainById);
   const perlin = parsePerlin(op.perlin);
@@ -164,7 +140,6 @@ export function parseOperations(operationJson: string): GeneralOperation[] | Par
       mssg: "Config is missing/has wrong config body: \n{ 'operations': [ ...my operations... ] }"
     };
   }
-  log('config has valid body');
 
   if (!config.operations.every(isValidConfigOperationBody)) {
     const invalidOps = config.operations
@@ -181,8 +156,7 @@ export function parseOperations(operationJson: string): GeneralOperation[] | Par
   for (op of configOperations) {
     const operation = parseFullOperation(op);
     if (isParsingError(operation)) {
-      logError(operation);
-      continue;
+      return operation
     }
     allOperations.push(operation);
   }
@@ -194,10 +168,8 @@ export function parseOperations(operationJson: string): GeneralOperation[] | Par
 export function parseJsonFromFile(filePath: string): GeneralOperation[] | ParsingError {
   const loadedConfigString = loadConfig(filePath);
   if (isParsingError(loadedConfigString)) {
-    logError(loadedConfigString);
-    return [];
+    return loadedConfigString;
   }
-  log('config has valid JSON format.');
 
   return parseOperations(loadedConfigString);
 }
