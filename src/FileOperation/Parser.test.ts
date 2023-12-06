@@ -140,6 +140,7 @@ describe('parse config', () => {
         `
         const jsonObject = JSON.parse(jsonString);
         const parsedOp = parseOperations(jsonString);
-        expect(isParsingError(parsedOp)).toBeFalsy();
+        expect(isParsingError(parsedOp)).toBeTruthy();
+        expect((parsedOp as ParsingError).mssg).toContain("could not find custom layer with name: Ta - Eurasian Aspen (Z)")
     })
 });
