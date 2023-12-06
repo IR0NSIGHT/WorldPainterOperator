@@ -177,6 +177,23 @@ you can use the perlin noise filter to generate natural shapes:
 threshold = 0.4 means that every block with a noise value of 0.4 and higher will be filled with frost.  
 amplitude is not relevant and should always stay 1.
 
+#### Comments
+Unlike standard json format, this one supports single line comments in the config.
+```json
+{ # this is a comment #
+## this is a comment too ###
+  "name": "big shape frost",
+  "layer": ["Frost", 1],
+  "perlin": {
+    "seed": 42069.0, //noise with the same number always generates the same shape
+    "scale": 100.0, //size of the "bubbles"
+    "amplitude": 1.0, //dont touch
+    "threshold": 0.4 //noise ranges from 0-1
+  }
+}
+```
+Note: The syntax used to be (this is a comment) and was changed in 1.6.4
+
 ## Limitations
 
 All operations are global, no restriction to area operated on is possible apart from the filters.
@@ -189,3 +206,4 @@ Fuzzy Edges: break up transitions between areas (forest to plains) by breaking u
 Smooth Transitions: similar approach but its not the edge shape thats broken up but the value of layer set (15->0 in 10 blocks range)
 
 GUI for creating filters, possibly website based/react
+
