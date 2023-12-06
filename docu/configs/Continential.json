@@ -1,51 +1,24 @@
 {
-    "operations": [
-        {
-            "name": "remove crap", 
-            "terrain": 2, 
-            "layer": [ ["Deciduous", 0], ["Frost", 0], ["Pines", 0] ]
-        }, 
-        {
-            "name": "flat plains", 
-            "terrain": [0], 
-            "aboveLevel": 70, 
-            "belowLevel": 90, 
-            "belowDegrees": 40
-        }, 
-        {
-            "name": "flat shore", 
-            "belowLevel": 70, 
-            "belowDegrees": 40, 
-            "terrain": 36
-        }, 
-        {
-            "name": "steep shore", 
-            "belowLevel": 70, 
-            "aboveDegrees": 40, 
-            "terrain": 74
-        }, 
-        {
-            "layer": [ ["Deciduous", 8], ["Pines", 2] ], 
-            "terrain": [0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 2, 3, 4], 
-            "perlin": {
-                "seed"     : 420.0, 
-                "scale"    : 100.0, 
-                "amplitude":   1.0, 
-                "threshold":   0.5  
-            }, 
-            "aboveLevel": 70, 
-            "belowLevel": 90, 
-            "belowDegrees": 40, 
-            "name": "flat forest"
-        }, 
-        {"name": "rocky cliffs", "terrain": 75, "aboveDegrees": 45}, 
-        {
-            "name": "rocky/green low cliffs", 
-            "terrain": [0, 75], 
-            "aboveDegrees": 30, 
-            "belowDegrees": 45, 
-            "aboveLevel": 70, 
-            "layer": ["Pines", 4]
-        }
-    ]
+  "operations": [
+    {##this is a comment##
+    #one##
+    ##two#
+      "name": "small bubble forest",
+      "layer": [
+        "Ta - Eurasian Aspen (Z)",
+        7
+      ],
+      "onlyOnLayer": [
+        "Mask - Forest",
+        1
+      ],
+      "perlin": {
+        "seed": 12345678.0,
+        "scale": 40.0,
+        "amplitude": 1.0,
+        "threshold": 0.5,
+        "belowDegrees": 30
+      }
+    }
+  ]
 }

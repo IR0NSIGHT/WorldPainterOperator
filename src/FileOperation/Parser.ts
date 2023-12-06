@@ -165,11 +165,3 @@ export function parseOperations(operationJson: string): GeneralOperation[] | Par
   }
   return allOperations;
 }
-export function parseJsonFromFile(filePath: string): GeneralOperation[] | ParsingError {
-  const loadedConfigString = loadConfig(filePath);
-  if (isParsingError(loadedConfigString)) {
-    return loadedConfigString;
-  }
-
-  return parseOperations(loadedConfigString);
-}

@@ -118,4 +118,28 @@ describe('parse config', () => {
         const parsedOp = parseOperations(jsonString);
         expect(isParsingError(parsedOp)).toBeFalsy();
     });
+
+    test("layer with (Z) in name, regression",() => {
+        const jsonString = `
+        {
+  "operations": [
+    {
+      "name": "small bubble forest",
+      "layer": ["Ta - Eurasian Aspen (Z)", 7],
+      "onlyOnLayer": ["Mask - Forest", 1],
+      "perlin": {
+        "seed": 12345678.0,
+        "scale": 40.0,
+        "amplitude": 1.0,
+        "threshold": 0.5,
+    "belowDegrees": 30
+      }
+    }
+  ]
+}
+        `
+        const jsonObject = JSON.parse(jsonString);
+        const parsedOp = parseOperations(jsonString);
+        expect(isParsingError(parsedOp)).toBeFalsy();
+    })
 });

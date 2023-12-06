@@ -14,7 +14,7 @@ export function loadConfig(filePath: string): string | ParsingError {
     try {
         // @ts-ignore java object
         let jsonString: string = new java.lang.String(bytes);
-        jsonString = jsonString.replace(/ *\([^)]*\) */g, ''); //remove "(a comment)" //TODO json with comments format
+        jsonString = jsonString.replace(/#.*#/g, ''); //remove "(a comment)" //TODO json with comments format
         return jsonString;
     } catch (e) {
         return {

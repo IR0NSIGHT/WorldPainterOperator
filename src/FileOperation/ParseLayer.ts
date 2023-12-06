@@ -55,7 +55,7 @@ export function toTypedArray<Type>(
 export type LayerValue = { layer: Layer; value: number };
 
 export const parseLayers = (
-  layer: object,
+  layer: object,  //TODO should be string[]
   getLayerById: (id: string) => Layer | ParsingError
 ): LayerValue[] | ParsingError => {
   const layerIds = toTypedArray<[string, number]>(
