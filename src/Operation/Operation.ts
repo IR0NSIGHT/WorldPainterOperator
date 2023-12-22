@@ -1,7 +1,7 @@
 import { Dimension } from '../Dimension';
 import { LayerSetting } from '../FileOperation/ParseLayer';
 import { FilterInterface } from '../Filter/FilterInterface';
-import { Terrain } from '../worldpainterApi/worldpainterApi';
+import {NoneTerrain, Terrain} from '../worldpainterApi/worldpainterApi';
 import {logAll, logToConsole, logToFile} from '../log';
 
 const testOperationFilters = (
@@ -31,6 +31,8 @@ export type GeneralOperation = {
 const applyOperation = (x: number, y: number, op: GeneralOperation, dimension: Dimension): void => {
   if (op.terrain.length != 0) {
     const terrainSample = sample(op.terrain);
+    if (terrainSample.getName() == NoneTerrain)  //skip special terrain
+      return
     dimension.setTerrainAt(x, y, terrainSample);
   }
 

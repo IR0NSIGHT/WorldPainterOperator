@@ -2,7 +2,11 @@ import { ParsingError } from '../FileOperation/Parser';
 import { Layer } from '../Layer/Layer';
 import { logToConsole } from "../log";
 
+export const NoneTerrain = "None";
 export function getTerrainById(terrainId: number): Terrain {
+  if (terrainId == -1) {
+    return { getName(): string { return NoneTerrain }}
+  }
   // @ts-ignore worldpainter java object
   const terrain = org.pepsoft.worldpainter.Terrain.VALUES[terrainId];
   return terrain;
